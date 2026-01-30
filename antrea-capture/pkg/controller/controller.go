@@ -25,10 +25,17 @@ const (
 	annotationKey = "tcpdump.antrea.io"
 )
 
+type captureProcess struct {
+	cmd     *exec.Cmd
+	stopCh  chan struct{}
+	stopped bool
+	mu      sync.Mutex
+}
+
 type Controller struct {
 	clientset kubernetes.Interface
 	nodeName  string
-	captures  map[string]*exec.Cmd
+	captures  map[string]*captureProcess
 	mu        sync.RWMutex
 	stopCh    chan struct{}
 }
@@ -46,7 +53,7 @@ func New(clientset kubernetes.Interface, nodeName string) *Controller {
 	return &Controller{
 		clientset: clientset,
 		nodeName:  nodeName,
-		captures:  make(map[string]*exec.Cmd),
+		captures:  make(map[string]*captureProcess),
 		stopCh:    make(chan struct{}),
 	}
 }
@@ -92,9 +99,9 @@ func (c *Controller) Shutdown() error {
 	c.mu.Lock()
 	defer c.mu.Unlock()
 
-	for podName, cmd := range c.captures {
+	for podName, cap := range c.captures {
 		klog.Infof("Stopping capture for pod: %s", podName)
-		c.stopCaptureInternal(podName, cmd)
+		c.stopCaptureInternal(podName, cap)
 	}
 
 	return nil
@@ -121,7 +128,19 @@ func (c *Controller) handlePodUpdate(oldObj, newObj any) {
 }
 
 func (c *Controller) handlePodDelete(obj any) {
-	pod := obj.(*corev1.Pod)
+	pod, ok := obj.(*corev1.Pod)
+	if !ok {
+		tombstone, ok := obj.(cache.DeletedFinalStateUnknown)
+		if !ok {
+			klog.Errorf("Couldn't get object from tombstone %#v", obj)
+			return
+		}
+		pod, ok = tombstone.Obj.(*corev1.Pod)
+		if !ok {
+			klog.Errorf("Tombstone contained object that is not a Pod %#v", obj)
+			return
+		}
+	}
 	klog.Infof("Pod deleted: %s/%s", pod.Namespace, pod.Name)
 	c.stopCapture(c.podKey(pod))
 }
@@ -186,7 +205,12 @@ func (c *Controller) startCaptureInternal(podKey string, podName string, maxFile
 		return
 	}
 
-	c.captures[podKey] = cmd
+	cap := &captureProcess{
+		cmd:     cmd,
+		stopCh:  make(chan struct{}),
+		stopped: false,
+	}
+	c.captures[podKey] = cap
 
 	go func() {
 		if err := cmd.Wait(); err != nil {
@@ -194,7 +218,13 @@ func (c *Controller) startCaptureInternal(podKey string, podName string, maxFile
 		}
 
 		c.mu.Lock()
-		delete(c.captures, podKey)
+		cap.mu.Lock()
+		if !cap.stopped {
+			delete(c.captures, podKey)
+			cap.stopped = true
+			close(cap.stopCh)
+		}
+		cap.mu.Unlock()
 		c.mu.Unlock()
 	}()
 }
@@ -203,26 +233,35 @@ func (c *Controller) stopCapture(podName string) {
 	c.mu.Lock()
 	defer c.mu.Unlock()
 
-	cmd, exists := c.captures[podName]
+	cap, exists := c.captures[podName]
 	if !exists {
 		return
 	}
 
-	c.stopCaptureInternal(podName, cmd)
+	c.stopCaptureInternal(podName, cap)
 }
 
-func (c *Controller) stopCaptureInternal(podName string, cmd *exec.Cmd) {
+func (c *Controller) stopCaptureInternal(podName string, cap *captureProcess) {
 	klog.Infof("Stopping capture for pod %s", podName)
 
-	if cmd.Process != nil {
+	cap.mu.Lock()
+	if cap.stopped {
+		cap.mu.Unlock()
+		return
+	}
+	cap.stopped = true
+	close(cap.stopCh)
+	cap.mu.Unlock()
+
+	if cap.cmd.Process != nil {
 		klog.V(4).Infof("Sending SIGTERM to tcpdump process for pod %s", podName)
-		if err := syscall.Kill(-cmd.Process.Pid, syscall.SIGTERM); err != nil {
+		if err := syscall.Kill(-cap.cmd.Process.Pid, syscall.SIGTERM); err != nil {
 			klog.V(4).Infof("Failed to send SIGTERM to tcpdump process for pod %s: %v", podName, err)
 		}
 
 		done := make(chan error, 1)
 		go func() {
-			done <- cmd.Wait()
+			done <- cap.cmd.Wait()
 		}()
 
 		select {
@@ -230,9 +269,10 @@ func (c *Controller) stopCaptureInternal(podName string, cmd *exec.Cmd) {
 			klog.V(4).Infof("tcpdump for pod %s terminated gracefully", podName)
 		case <-time.After(5 * time.Second):
 			klog.Warningf("tcpdump for pod %s did not terminate gracefully, killing", podName)
-			if err := syscall.Kill(-cmd.Process.Pid, syscall.SIGKILL); err != nil {
+			if err := syscall.Kill(-cap.cmd.Process.Pid, syscall.SIGKILL); err != nil {
 				klog.V(4).Infof("Failed to send SIGKILL to tcpdump process for pod %s: %v", podName, err)
 			}
+			<-done
 		}
 	}
 

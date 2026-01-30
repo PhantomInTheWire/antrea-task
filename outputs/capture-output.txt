@@ -1,65 +1,18 @@
 reading from file /capture-test-traffic-pod.pcap0, link-type LINUX_SLL2 (Linux cooked v2), snapshot length 262144
 Warning: interface names might be incorrect
-14:46:46.062325 eth0  In  IP 192.168.147.3.6443 > 192.168.147.2.50930: Flags [.], ack 3396771258, win 73, options [nop,nop,TS val 2869295552 ecr 2338917475], length 0
-14:46:46.100619 eth0  In  IP 192.168.147.3.10351 > 192.168.147.2.10351: UDP, length 106
-14:46:46.101008 eth0  Out IP 192.168.147.2.10351 > 192.168.147.3.10351: UDP, length 18
-14:46:46.630624 eth0  In  IP 192.168.147.4.10351 > 192.168.147.2.10351: UDP, length 100
-14:46:46.631486 eth0  Out IP 192.168.147.2.10351 > 192.168.147.4.10351: UDP, length 18
-14:46:46.665087 test-tra-8ee099 P   IP 172.31.129.2 > 8.8.8.8: ICMP echo request, id 11, seq 1, length 64
-14:46:46.667222 antrea-gw0 In  IP 172.31.129.2 > 8.8.8.8: ICMP echo request, id 11, seq 1, length 64
-14:46:46.670892 eth0  Out IP 192.168.147.2 > 8.8.8.8: ICMP echo request, id 11, seq 1, length 64
-14:46:46.686838 test-tra-8ee099 M   IP6 fe80::44e7:efff:fe92:89d0 > ff02::2: ICMP6, router solicitation, length 16
-14:46:46.695145 eth0  In  IP 8.8.8.8 > 192.168.147.2: ICMP echo reply, id 11, seq 1, length 64
-14:46:46.695156 antrea-gw0 Out IP 8.8.8.8 > 172.31.129.2: ICMP echo reply, id 11, seq 1, length 64
-14:46:46.695177 test-tra-8ee099 Out IP 8.8.8.8 > 172.31.129.2: ICMP echo reply, id 11, seq 1, length 64
-14:46:47.003488 eth0  Out IP 192.168.147.2.10351 > 192.168.147.3.10351: UDP, length 106
-14:46:47.004955 eth0  In  IP 192.168.147.3.10351 > 192.168.147.2.10351: UDP, length 18
-14:46:47.153817 eth0  Out IP 192.168.147.2.50930 > 192.168.147.3.6443: Flags [P.], seq 1:41, ack 0, win 90, options [nop,nop,TS val 2338918607 ecr 2869295552], length 40
-14:46:47.153907 eth0  In  IP 192.168.147.3.6443 > 192.168.147.2.50930: Flags [.], ack 41, win 73, options [nop,nop,TS val 2869296643 ecr 2338918607], length 0
-14:46:47.153950 eth0  Out IP 192.168.147.2.50930 > 192.168.147.3.6443: Flags [P.], seq 41:585, ack 0, win 90, options [nop,nop,TS val 2338918607 ecr 2869296643], length 544
-14:46:47.153963 eth0  In  IP 192.168.147.3.6443 > 192.168.147.2.50930: Flags [.], ack 585, win 73, options [nop,nop,TS val 2869296643 ecr 2338918607], length 0
-14:46:47.159961 eth0  In  IP 192.168.147.3.6443 > 192.168.147.2.50930: Flags [P.], seq 0:90, ack 585, win 73, options [nop,nop,TS val 2869296649 ecr 2338918607], length 90
-14:46:47.160150 eth0  In  IP 192.168.147.3.6443 > 192.168.147.2.50930: Flags [P.], seq 90:634, ack 585, win 73, options [nop,nop,TS val 2869296650 ecr 2338918607], length 544
-14:46:47.160193 eth0  Out IP 192.168.147.2.50930 > 192.168.147.3.6443: Flags [.], ack 634, win 90, options [nop,nop,TS val 2338918614 ecr 2869296649], length 0
-14:46:47.673648 test-tra-8ee099 P   IP 172.31.129.2 > 8.8.8.8: ICMP echo request, id 11, seq 2, length 64
-14:46:47.673833 antrea-gw0 In  IP 172.31.129.2 > 8.8.8.8: ICMP echo request, id 11, seq 2, length 64
-14:46:47.673863 eth0  Out IP 192.168.147.2 > 8.8.8.8: ICMP echo request, id 11, seq 2, length 64
-14:46:47.707153 eth0  In  IP 8.8.8.8 > 192.168.147.2: ICMP echo reply, id 11, seq 2, length 64
-14:46:47.707175 antrea-gw0 Out IP 8.8.8.8 > 172.31.129.2: ICMP echo reply, id 11, seq 2, length 64
-14:46:47.707208 test-tra-8ee099 Out IP 8.8.8.8 > 172.31.129.2: ICMP echo reply, id 11, seq 2, length 64
-14:46:48.006715 eth0  Out IP 192.168.147.2.10351 > 192.168.147.4.10351: UDP, length 100
-14:46:48.007385 eth0  In  IP 192.168.147.4.10351 > 192.168.147.2.10351: UDP, length 18
-14:46:48.101003 eth0  In  IP 192.168.147.3.10351 > 192.168.147.2.10351: UDP, length 106
-14:46:48.102277 eth0  Out IP 192.168.147.2.10351 > 192.168.147.3.10351: UDP, length 18
-14:46:48.131750 eth0  Out IP 192.168.147.2.60434 > 192.168.147.4.10349: Flags [P.], seq 2166392756:2166392795, ack 2396144025, win 73, options [nop,nop,TS val 3880281503 ecr 1376104598], length 39
-14:46:48.133780 eth0  In  IP 192.168.147.4.10349 > 192.168.147.2.60434: Flags [P.], seq 1:40, ack 39, win 70, options [nop,nop,TS val 1376134604 ecr 3880281503], length 39
-14:46:48.133849 eth0  Out IP 192.168.147.2.60434 > 192.168.147.4.10349: Flags [.], ack 40, win 73, options [nop,nop,TS val 3880281505 ecr 1376134604], length 0
-14:46:48.632716 eth0  In  IP 192.168.147.4.10351 > 192.168.147.2.10351: UDP, length 100
-14:46:48.633340 eth0  Out IP 192.168.147.2.10351 > 192.168.147.4.10351: UDP, length 18
-14:46:48.674689 test-tra-8ee099 P   IP 172.31.129.2 > 8.8.8.8: ICMP echo request, id 11, seq 3, length 64
-14:46:48.674711 antrea-gw0 In  IP 172.31.129.2 > 8.8.8.8: ICMP echo request, id 11, seq 3, length 64
-14:46:48.674747 eth0  Out IP 192.168.147.2 > 8.8.8.8: ICMP echo request, id 11, seq 3, length 64
-14:46:48.697800 eth0  In  IP 8.8.8.8 > 192.168.147.2: ICMP echo reply, id 11, seq 3, length 64
-14:46:48.697829 antrea-gw0 Out IP 8.8.8.8 > 172.31.129.2: ICMP echo reply, id 11, seq 3, length 64
-14:46:48.697850 test-tra-8ee099 Out IP 8.8.8.8 > 172.31.129.2: ICMP echo reply, id 11, seq 3, length 64
-14:46:49.052383 eth0  Out IP 192.168.147.2.10351 > 192.168.147.3.10351: UDP, length 106
-14:46:49.054987 eth0  In  IP 192.168.147.3.10351 > 192.168.147.2.10351: UDP, length 18
-14:46:49.675242 test-tra-8ee099 P   IP 172.31.129.2 > 8.8.8.8: ICMP echo request, id 11, seq 4, length 64
-14:46:49.675337 antrea-gw0 In  IP 172.31.129.2 > 8.8.8.8: ICMP echo request, id 11, seq 4, length 64
-14:46:49.675415 eth0  Out IP 192.168.147.2 > 8.8.8.8: ICMP echo request, id 11, seq 4, length 64
-14:46:49.697116 eth0  In  IP 8.8.8.8 > 192.168.147.2: ICMP echo reply, id 11, seq 4, length 64
-14:46:49.697137 antrea-gw0 Out IP 8.8.8.8 > 172.31.129.2: ICMP echo reply, id 11, seq 4, length 64
-14:46:49.697157 test-tra-8ee099 Out IP 8.8.8.8 > 172.31.129.2: ICMP echo reply, id 11, seq 4, length 64
-14:46:50.017597 eth0  Out IP 192.168.147.2.10351 > 192.168.147.4.10351: UDP, length 100
-14:46:50.022428 eth0  In  IP 192.168.147.4.10351 > 192.168.147.2.10351: UDP, length 18
-14:46:50.100146 eth0  In  IP 192.168.147.3.10351 > 192.168.147.2.10351: UDP, length 106
-14:46:50.100597 eth0  Out IP 192.168.147.2.10351 > 192.168.147.3.10351: UDP, length 18
-14:46:50.270512 eth0  Out IP6 fe80::ccab:e5ff:fe82:d39f > fe80::c822:8fff:fea8:da7f: ICMP6, neighbor solicitation, who has fe80::c822:8fff:fea8:da7f, length 32
-14:46:50.270585 antrea-gw0 Out IP6 fe80::2456:dfff:fe29:9261 > ff02::2: ICMP6, router solicitation, length 16
-14:46:50.270788 eth0  In  IP6 fe80::c822:8fff:fea8:da7f > fe80::ccab:e5ff:fe82:d39f: ICMP6, neighbor advertisement, tgt is fe80::c822:8fff:fea8:da7f, length 24
-14:46:50.631876 eth0  In  IP 192.168.147.4.10351 > 192.168.147.2.10351: UDP, length 100
-14:46:50.632325 eth0  Out IP 192.168.147.2.10351 > 192.168.147.4.10351: UDP, length 18
-14:46:50.782785 antrea-gw0 Out ARP, Request who-has 172.31.129.2 tell 172.31.129.1, length 28
-14:46:50.784701 test-tra-8ee099 Out ARP, Request who-has 172.31.129.2 tell 172.31.129.1, length 28
-tcpdump: pcap_loop: truncated dump file; tried to read 16 header bytes, only got 14
-command terminated with exit code 1
+06:43:01.415489 eth0  Out IP 172.31.130.3 > 8.8.8.8: ICMP echo request, id 11, seq 1, length 64
+06:43:01.434856 eth0  In  IP 8.8.8.8 > 172.31.130.3: ICMP echo reply, id 11, seq 1, length 64
+06:43:02.814889 eth0  Out IP 172.31.130.3 > 8.8.8.8: ICMP echo request, id 11, seq 2, length 64
+06:43:02.834766 eth0  In  IP 8.8.8.8 > 172.31.130.3: ICMP echo reply, id 11, seq 2, length 64
+06:43:03.816611 eth0  Out IP 172.31.130.3 > 8.8.8.8: ICMP echo request, id 11, seq 3, length 64
+06:43:03.838766 eth0  In  IP 8.8.8.8 > 172.31.130.3: ICMP echo reply, id 11, seq 3, length 64
+06:43:03.893037 eth0  Out IP6 fe80::d84a:4aff:feeb:399 > ff02::2: ICMP6, router solicitation, length 16
+06:43:04.821025 eth0  Out IP 172.31.130.3 > 8.8.8.8: ICMP echo request, id 11, seq 4, length 64
+06:43:04.839934 eth0  In  IP 8.8.8.8 > 172.31.130.3: ICMP echo reply, id 11, seq 4, length 64
+06:43:05.939834 eth0  In  ARP, Request who-has 172.31.130.3 tell 172.31.130.1, length 28
+06:43:05.939844 eth0  Out ARP, Reply 172.31.130.3 is-at da:4a:4a:eb:03:99, length 28
+06:43:21.812017 eth0  Out IP6 fe80::d84a:4aff:feeb:399 > ff02::2: ICMP6, router solicitation, length 16
+06:44:00.212340 eth0  Out IP6 fe80::d84a:4aff:feeb:399 > ff02::2: ICMP6, router solicitation, length 16
+06:45:18.035613 eth0  Out IP6 fe80::d84a:4aff:feeb:399 > ff02::2: ICMP6, router solicitation, length 16
+06:47:53.687998 eth0  Out IP6 fe80::d84a:4aff:feeb:399 > ff02::2: ICMP6, router solicitation, length 16
+06:52:48.595550 eth0  Out IP6 fe80::d84a:4aff:feeb:399 > ff02::2: ICMP6, router solicitation, length 16

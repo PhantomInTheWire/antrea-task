@@ -3,7 +3,6 @@ package main
 import (
 	"context"
 	"flag"
-	"fmt"
 	"os"
 	"os/signal"
 	"syscall"
@@ -17,60 +16,24 @@ import (
 func main() {
 	klog.InitFlags(nil)
 	flag.Parse()
-
-	nodeName := os.Getenv("NODE_NAME")
-	if nodeName == "" {
-		klog.Fatal("NODE_NAME environment variable is required")
+	node := os.Getenv("NODE_NAME")
+	if node == "" {
+		klog.Fatal("NODE_NAME required")
 	}
-
-	klog.Infof("Starting packet capture controller on node: %s", nodeName)
-
-	config, err := buildConfig()
+	cfg, err := rest.InClusterConfig()
 	if err != nil {
-		klog.Fatalf("Failed to build k8s config: %v", err)
+		cfg, err = clientcmd.BuildConfigFromFlags("", clientcmd.RecommendedHomeFile)
+		if err != nil {
+			klog.Fatal(err)
+		}
 	}
-
-	clientset, err := kubernetes.NewForConfig(config)
+	cs, err := kubernetes.NewForConfig(cfg)
 	if err != nil {
-		klog.Fatalf("Failed to create k8s client: %v", err)
+		klog.Fatal(err)
 	}
-
-	ctrl := NewController(clientset, nodeName)
-
-	ctx, cancel := context.WithCancel(context.Background())
+	ctx, cancel := signal.NotifyContext(context.Background(), syscall.SIGINT, syscall.SIGTERM)
 	defer cancel()
-
-	sigCh := make(chan os.Signal, 1)
-	signal.Notify(sigCh, syscall.SIGINT, syscall.SIGTERM)
-
-	go func() {
-		sig := <-sigCh
-		klog.Infof("Received signal: %v", sig)
-		cancel()
-	}()
-
-	if err := ctrl.Run(ctx); err != nil {
-		klog.Fatalf("Controller error: %v", err)
+	if err := NewController(cs, node).Run(ctx); err != nil {
+		klog.Fatal(err)
 	}
-
-	klog.Info("Controller stopped gracefully")
-}
-
-func buildConfig() (*rest.Config, error) {
-	if _, err := os.Stat("/var/run/secrets/kubernetes.io/serviceaccount/token"); err == nil {
-		klog.Info("Running in-cluster, using service account")
-		return rest.InClusterConfig()
-	}
-
-	kubeconfig := os.Getenv("KUBECONFIG")
-	if kubeconfig == "" {
-		kubeconfig = os.Getenv("HOME") + "/.kube/config"
-	}
-
-	if _, err := os.Stat(kubeconfig); err == nil {
-		klog.Infof("Using kubeconfig: %s", kubeconfig)
-		return clientcmd.BuildConfigFromFlags("", kubeconfig)
-	}
-
-	return nil, fmt.Errorf("unable to find kubeconfig or in-cluster config")
 }

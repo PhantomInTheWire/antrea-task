@@ -28,7 +28,7 @@ cluster-setup:
 
 deploy: docker-build
 	@kind load docker-image $(IMAGE):latest --name $(CLUSTER)
-	@kubectl apply -f $(DEPLOY_DIR)/rbac.yaml && kubectl apply -f $(DEPLOY_DIR)/daemonset.yaml
+	@kubectl apply -f $(DEPLOY_DIR)/daemonset.yaml && kubectl apply -f $(DEPLOY_DIR)/rbac.yaml
 	@kubectl rollout status daemonset/$(BINARY) -n $(BINARY) --timeout=120s
 
 test:

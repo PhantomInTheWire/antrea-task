@@ -10,7 +10,7 @@ RUN CGO_ENABLED=0 GOOS=linux go build -ldflags="-w -s" -o antrea-capture .
 FROM ubuntu:24.04
 
 RUN apt-get update && \
-    apt-get install -y --no-install-recommends tcpdump && \
+    apt-get install -y --no-install-recommends tcpdump util-linux && \
     rm -rf /var/lib/apt/lists/*
 COPY --from=builder /build/antrea-capture /usr/local/bin/antrea-capture
 

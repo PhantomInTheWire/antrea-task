@@ -1,6 +1,6 @@
 module github.com/PhantomInTheWire/antrea-capture
 
-go 1.25.6
+go 1.23
 
 require (
 	k8s.io/api v0.31.0

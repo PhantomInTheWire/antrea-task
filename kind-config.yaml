@@ -1,0 +1,11 @@
+kind: Cluster
+apiVersion: kind.x-k8s.io/v1alpha4
+name: antrea-capture
+networking:
+  disableDefaultCNI: true
+  podSubnet: "172.31.128.0/17"
+  serviceSubnet: "172.30.0.0/16"
+nodes:
+- role: control-plane
+- role: worker
+- role: worker

@@ -8,7 +8,7 @@ import (
 	"os/signal"
 	"syscall"
 
-	"github.com/user/antrea-capture/pkg/controller"
+	"github.com/PhantomInTheWire/antrea-capture/pkg/controller"
 	"k8s.io/client-go/kubernetes"
 	"k8s.io/client-go/rest"
 	"k8s.io/client-go/tools/clientcmd"

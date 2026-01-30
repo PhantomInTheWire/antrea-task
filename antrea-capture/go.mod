@@ -1,4 +1,4 @@
-module github.com/user/antrea-capture
+module github.com/PhantomInTheWire/antrea-capture
 
 go 1.25.6
 

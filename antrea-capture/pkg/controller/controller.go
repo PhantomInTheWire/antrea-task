@@ -90,13 +90,13 @@ func (c *Controller) Shutdown() error {
 	return nil
 }
 
-func (c *Controller) handlePodAdd(obj interface{}) {
+func (c *Controller) handlePodAdd(obj any) {
 	pod := obj.(*corev1.Pod)
 	klog.V(4).Infof("Pod added: %s/%s", pod.Namespace, pod.Name)
 	c.processPod(pod)
 }
 
-func (c *Controller) handlePodUpdate(oldObj, newObj interface{}) {
+func (c *Controller) handlePodUpdate(oldObj, newObj any) {
 	oldPod := oldObj.(*corev1.Pod)
 	newPod := newObj.(*corev1.Pod)
 
@@ -110,7 +110,7 @@ func (c *Controller) handlePodUpdate(oldObj, newObj interface{}) {
 	}
 }
 
-func (c *Controller) handlePodDelete(obj interface{}) {
+func (c *Controller) handlePodDelete(obj any) {
 	pod := obj.(*corev1.Pod)
 	klog.Infof("Pod deleted: %s/%s", pod.Namespace, pod.Name)
 	c.stopCapture(pod.Name)

@@ -127,17 +127,21 @@ test-collect:
 	CAPTURE_POD=$$(kubectl get pods -n antrea-capture -l app=antrea-capture -o jsonpath="{.items[?(@.spec.nodeName=='$$TEST_NODE')].metadata.name}") && \
 	echo "Capture pod: $$CAPTURE_POD on node $$TEST_NODE" && \
 	echo "Saving capture files listing..." && \
-	kubectl exec $$CAPTURE_POD -n antrea-capture -- ls -l /captures/ > outputs/capture-files.txt 2>&1 || echo "No capture files yet" > outputs/capture-files.txt && \
-	echo "Extracting pcap file..." && \
-	PCAP_FILE=$$(kubectl exec $$CAPTURE_POD -n antrea-capture -- sh -c "ls /captures/capture-*.pcap* 2>/dev/null | head -1" 2>/dev/null || echo "") && \
+	(kubectl exec $$CAPTURE_POD -n antrea-capture -- sh -c "ls -l /capture-*.pcap* 2>/dev/null" > outputs/capture-files.txt 2>&1 && echo "Files found") || echo "No capture files found" > outputs/capture-files.txt
+	@echo "Extracting pcap file..."
+	@TEST_NODE=$$(kubectl get pod test-traffic-pod -n default -o jsonpath='{.spec.nodeName}') && \
+	CAPTURE_POD=$$(kubectl get pods -n antrea-capture -l app=antrea-capture -o jsonpath="{.items[?(@.spec.nodeName=='$$TEST_NODE')].metadata.name}") && \
+	PCAP_FILE=$$(kubectl exec $$CAPTURE_POD -n antrea-capture -- sh -c "ls /capture-*.pcap* 2>/dev/null | head -1" 2>/dev/null) && \
 	if [ -n "$$PCAP_FILE" ]; then \
-		kubectl cp antrea-capture/$$CAPTURE_POD:$$PCAP_FILE outputs/capture-file.pcap 2>/dev/null && \
+		echo "Found pcap file: $$PCAP_FILE" && \
+		kubectl cp antrea-capture/$$CAPTURE_POD:$$PCAP_FILE outputs/capture-file.pcap && \
 		echo "Pcap file saved to outputs/capture-file.pcap" && \
 		echo "Converting pcap to text output..." && \
-		kubectl exec $$CAPTURE_POD -n antrea-capture -- tcpdump -r $$PCAP_FILE -n > outputs/capture-output.txt 2>&1 && \
+		kubectl exec $$CAPTURE_POD -n antrea-capture -- tcpdump -r $$PCAP_FILE -n > outputs/capture-output.txt 2>&1 || true && \
 		echo "Text output saved to outputs/capture-output.txt"; \
 	else \
-		echo "No pcap files found yet" > outputs/capture-output.txt; \
+		echo "No pcap files found" && \
+		echo "No pcap files found" > outputs/capture-output.txt; \
 	fi
 
 

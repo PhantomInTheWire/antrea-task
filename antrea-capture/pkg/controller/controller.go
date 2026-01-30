@@ -33,6 +33,16 @@ type Controller struct {
 	stopCh    chan struct{}
 }
 
+// stderrBuffer captures tcpdump stderr for logging
+type stderrBuffer struct {
+	podKey string
+}
+
+func (s *stderrBuffer) Write(p []byte) (n int, err error) {
+	klog.Errorf("tcpdump stderr for pod %s: %s", s.podKey, string(p))
+	return len(p), nil
+}
+
 func New(clientset kubernetes.Interface, nodeName string) *Controller {
 	return &Controller{
 		clientset: clientset,
@@ -157,7 +167,7 @@ func (c *Controller) startCapture(podKey string, podName string, maxFiles int) {
 		return
 	}
 
-	captureFile := fmt.Sprintf("/captures/capture-%s.pcap", podName)
+	captureFile := fmt.Sprintf("/capture-%s.pcap", podName)
 	klog.Infof("Starting capture for pod %s (max files: %d, output: %s)",
 		podKey, maxFiles, captureFile)
 
@@ -173,6 +183,9 @@ func (c *Controller) startCapture(podKey string, podName string, maxFiles int) {
 	cmd.SysProcAttr = &syscall.SysProcAttr{
 		Setpgid: true,
 	}
+
+	// Capture stderr to log errors
+	cmd.Stderr = &stderrBuffer{podKey: podKey}
 
 	if err := cmd.Start(); err != nil {
 		klog.Errorf("Failed to start tcpdump for pod %s: %v", podKey, err)
@@ -239,7 +252,7 @@ func (c *Controller) cleanupFiles(podKey string) {
 	parts := strings.Split(podKey, "/")
 	podName := parts[len(parts)-1]
 
-	pattern := fmt.Sprintf("/captures/capture-%s.pcap*", podName)
+	pattern := fmt.Sprintf("/capture-%s.pcap*", podName)
 	klog.Infof("Cleaning up capture files matching: %s", pattern)
 
 	matches, err := filepath.Glob(pattern)

@@ -32,9 +32,6 @@ spec:
               valueFrom:
                 fieldRef:
                   fieldPath: spec.nodeName
-          volumeMounts:
-            - name: captures
-              mountPath: /captures
           resources:
             requests:
               cpu: 100m
@@ -42,11 +39,6 @@ spec:
             limits:
               cpu: 500m
               memory: 256Mi
-      volumes:
-        - name: captures
-          hostPath:
-            path: /var/lib/antrea-capture
-            type: DirectoryOrCreate
       tolerations:
         - key: node-role.kubernetes.io/control-plane
           operator: Exists

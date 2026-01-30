@@ -117,6 +117,7 @@ test-annotate:
 
 test-collect:
 	@echo "=== Collecting test outputs ==="
+	@mkdir -p outputs
 	@echo "Saving pod description..."
 	kubectl describe pod test-traffic-pod -n default > outputs/pod-describe.txt
 	@echo "Saving all pods list..."

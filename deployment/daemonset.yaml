@@ -1,0 +1,56 @@
+apiVersion: apps/v1
+kind: DaemonSet
+metadata:
+  name: antrea-capture
+  namespace: antrea-capture
+  labels:
+    app: antrea-capture
+spec:
+  selector:
+    matchLabels:
+      app: antrea-capture
+  template:
+    metadata:
+      labels:
+        app: antrea-capture
+    spec:
+      serviceAccountName: antrea-capture
+      hostNetwork: true
+      hostPID: true
+      containers:
+        - name: antrea-capture
+          image: antrea-capture:latest
+          imagePullPolicy: IfNotPresent
+          securityContext:
+            privileged: true
+            capabilities:
+              add:
+                - NET_RAW
+                - NET_ADMIN
+          env:
+            - name: NODE_NAME
+              valueFrom:
+                fieldRef:
+                  fieldPath: spec.nodeName
+          volumeMounts:
+            - name: captures
+              mountPath: /captures
+          resources:
+            requests:
+              cpu: 100m
+              memory: 128Mi
+            limits:
+              cpu: 500m
+              memory: 256Mi
+      volumes:
+        - name: captures
+          hostPath:
+            path: /var/lib/antrea-capture
+            type: DirectoryOrCreate
+      tolerations:
+        - key: node-role.kubernetes.io/control-plane
+          operator: Exists
+          effect: NoSchedule
+        - key: node-role.kubernetes.io/master
+          operator: Exists
+          effect: NoSchedule

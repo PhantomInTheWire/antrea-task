@@ -26,11 +26,15 @@ const (
 )
 
 type captureProcess struct {
-	cmd     *exec.Cmd
-	stopCh  chan struct{}
-	stopped bool
-	mu      sync.Mutex
+	cmd    *exec.Cmd
+	stopCh chan struct{}
 }
+
+type writer struct {
+	write func([]byte) (int, error)
+}
+
+func (w *writer) Write(p []byte) (int, error) { return w.write(p) }
 
 type Controller struct {
 	clientset kubernetes.Interface
@@ -40,13 +44,11 @@ type Controller struct {
 	stopCh    chan struct{}
 }
 
-type stderrBuffer struct {
-	podKey string
-}
-
-func (s *stderrBuffer) Write(p []byte) (n int, err error) {
-	klog.Errorf("tcpdump stderr for pod %s: %s", s.podKey, string(p))
-	return len(p), nil
+func logStderr(podKey string) func([]byte) (int, error) {
+	return func(p []byte) (int, error) {
+		klog.Errorf("tcpdump stderr for pod %s: %s", podKey, string(p))
+		return len(p), nil
+	}
 }
 
 func NewController(clientset kubernetes.Interface, nodeName string) *Controller {
@@ -128,29 +130,16 @@ func (c *Controller) handlePodUpdate(oldObj, newObj any) {
 }
 
 func (c *Controller) handlePodDelete(obj any) {
-	pod, ok := obj.(*corev1.Pod)
-	if !ok {
-		tombstone, ok := obj.(cache.DeletedFinalStateUnknown)
-		if !ok {
-			klog.Errorf("Couldn't get object from tombstone %#v", obj)
-			return
-		}
-		pod, ok = tombstone.Obj.(*corev1.Pod)
-		if !ok {
-			klog.Errorf("Tombstone contained object that is not a Pod %#v", obj)
-			return
-		}
+	pod := obj.(*corev1.Pod)
+	if tombstone, ok := obj.(cache.DeletedFinalStateUnknown); ok {
+		pod = tombstone.Obj.(*corev1.Pod)
 	}
 	klog.Infof("Pod deleted: %s/%s", pod.Namespace, pod.Name)
-	c.stopCapture(c.podKey(pod))
-}
-
-func (c *Controller) podKey(pod *corev1.Pod) string {
-	return pod.Namespace + "/" + pod.Name
+	c.stopCapture(pod.Namespace + "/" + pod.Name)
 }
 
 func (c *Controller) processPod(pod *corev1.Pod) {
-	podKey := c.podKey(pod)
+	podKey := pod.Namespace + "/" + pod.Name
 	annotation := pod.Annotations[annotationKey]
 
 	if annotation == "" {
@@ -176,55 +165,30 @@ func (c *Controller) processPod(pod *corev1.Pod) {
 	c.startCaptureInternal(podKey, pod.Name, maxFiles)
 }
 
-func (c *Controller) startCaptureInternal(podKey string, podName string, maxFiles int) {
+func (c *Controller) startCaptureInternal(podKey, podName string, maxFiles int) {
 	if _, exists := c.captures[podKey]; exists {
 		return
 	}
 
 	captureFile := fmt.Sprintf("/capture-%s.pcap", podName)
-	klog.Infof("Starting capture for pod %s (max files: %d, output: %s)",
-		podKey, maxFiles, captureFile)
+	klog.Infof("Starting capture for pod %s (max files: %d, output: %s)", podKey, maxFiles, captureFile)
 
-	cmd := exec.Command("tcpdump",
-		"-C", "1",
-		"-W", strconv.Itoa(maxFiles),
-		"-w", captureFile,
-		"-i", "any",
-		"-n",
-		"-Z", "root",
-	)
-
-	cmd.SysProcAttr = &syscall.SysProcAttr{
-		Setpgid: true,
-	}
-
-	cmd.Stderr = &stderrBuffer{podKey: podKey}
+	cmd := exec.Command("tcpdump", "-C", "1", "-W", strconv.Itoa(maxFiles), "-w", captureFile, "-i", "any", "-n", "-Z", "root")
+	cmd.SysProcAttr = &syscall.SysProcAttr{Setpgid: true}
+	cmd.Stderr = &writer{write: logStderr(podKey)}
 
 	if err := cmd.Start(); err != nil {
 		klog.Errorf("Failed to start tcpdump for pod %s: %v", podKey, err)
 		return
 	}
 
-	cap := &captureProcess{
-		cmd:     cmd,
-		stopCh:  make(chan struct{}),
-		stopped: false,
-	}
+	cap := &captureProcess{cmd: cmd, stopCh: make(chan struct{})}
 	c.captures[podKey] = cap
 
 	go func() {
-		if err := cmd.Wait(); err != nil {
-			klog.V(4).Infof("tcpdump for pod %s exited: %v", podKey, err)
-		}
-
+		_ = cmd.Wait()
 		c.mu.Lock()
-		cap.mu.Lock()
-		if !cap.stopped {
-			delete(c.captures, podKey)
-			cap.stopped = true
-			close(cap.stopCh)
-		}
-		cap.mu.Unlock()
+		delete(c.captures, podKey)
 		c.mu.Unlock()
 	}()
 }
@@ -243,74 +207,41 @@ func (c *Controller) stopCapture(podName string) {
 
 func (c *Controller) stopCaptureInternal(podName string, cap *captureProcess) {
 	klog.Infof("Stopping capture for pod %s", podName)
-
-	cap.mu.Lock()
-	if cap.stopped {
-		cap.mu.Unlock()
-		return
-	}
-	cap.stopped = true
 	close(cap.stopCh)
-	cap.mu.Unlock()
 
 	if cap.cmd.Process != nil {
-		klog.V(4).Infof("Sending SIGTERM to tcpdump process for pod %s", podName)
-		if err := syscall.Kill(-cap.cmd.Process.Pid, syscall.SIGTERM); err != nil {
-			klog.V(4).Infof("Failed to send SIGTERM to tcpdump process for pod %s: %v", podName, err)
-		}
-
-		done := make(chan error, 1)
-		go func() {
-			done <- cap.cmd.Wait()
-		}()
-
+		_ = syscall.Kill(-cap.cmd.Process.Pid, syscall.SIGTERM)
+		done := make(chan struct{})
+		go func() { _ = cap.cmd.Wait(); close(done) }()
 		select {
 		case <-done:
-			klog.V(4).Infof("tcpdump for pod %s terminated gracefully", podName)
 		case <-time.After(5 * time.Second):
-			klog.Warningf("tcpdump for pod %s did not terminate gracefully, killing", podName)
-			if err := syscall.Kill(-cap.cmd.Process.Pid, syscall.SIGKILL); err != nil {
-				klog.V(4).Infof("Failed to send SIGKILL to tcpdump process for pod %s: %v", podName, err)
-			}
+			_ = syscall.Kill(-cap.cmd.Process.Pid, syscall.SIGKILL)
 			<-done
 		}
 	}
 
 	delete(c.captures, podName)
-
 	c.cleanupFiles(podName)
 }
 
 func (c *Controller) cleanupFiles(podKey string) {
-	parts := strings.Split(podKey, "/")
-	podName := parts[len(parts)-1]
-
+	podName := podKey[strings.LastIndex(podKey, "/")+1:]
 	pattern := fmt.Sprintf("/capture-%s.pcap*", podName)
 	klog.Infof("Cleaning up capture files matching: %s", pattern)
 
-	matches, err := filepath.Glob(pattern)
-	if err != nil {
-		klog.Errorf("Failed to glob pattern %s: %v", pattern, err)
+	matches, _ := filepath.Glob(pattern)
+	if len(matches) == 0 {
+		klog.V(4).Infof("No capture files found for pod %s", podKey)
 		return
 	}
 
-	failedDeletions := 0
-	for _, file := range matches {
-		klog.V(4).Infof("Deleting capture file: %s", file)
-		if err := os.Remove(file); err != nil {
-			klog.Errorf("Failed to delete file %s: %v", file, err)
-			failedDeletions++
+	failed := 0
+	for _, f := range matches {
+		if err := os.Remove(f); err != nil {
+			klog.Errorf("Failed to delete file %s: %v", f, err)
+			failed++
 		}
 	}
-
-	if len(matches) == 0 {
-		klog.V(4).Infof("No capture files found for pod %s", podKey)
-	} else {
-		if failedDeletions > 0 {
-			klog.Warningf("Deleted %d of %d capture file(s) for pod %s (%d failed)",
-				len(matches)-failedDeletions, len(matches), podKey, failedDeletions)
-		} else {
-			klog.Infof("Deleted %d capture file(s) for pod %s", len(matches), podKey)
-		}
-	}
+	klog.Infof("Deleted %d/%d capture files for pod %s", len(matches)-failed, len(matches), podKey)
 }

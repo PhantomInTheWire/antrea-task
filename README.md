@@ -2,13 +2,6 @@
 
 Poor-man's version of the Antrea's PacketCapture feature. Kubernetes controller running as a DaemonSet that performs packet captures on demand.
 
-## How It Works
-
-- Watches Pods running on the same Node
-- When a Pod is annotated with `tcpdump.antrea.io: "<N>"`, starts tcpdump capture
-- Runs: `tcpdump -C 1 -W <N> -w /capture-<pod>.pcap -i any -n`
-- Capture stops and pcap files are cleaned up when annotation is removed
-
 ## Quick Start
 
 ```bash

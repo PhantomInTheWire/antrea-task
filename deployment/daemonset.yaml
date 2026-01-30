@@ -3,16 +3,12 @@ kind: DaemonSet
 metadata:
   name: antrea-capture
   namespace: antrea-capture
-  labels:
-    app: antrea-capture
 spec:
   selector:
-    matchLabels:
-      app: antrea-capture
+    matchLabels: {app: antrea-capture}
   template:
     metadata:
-      labels:
-        app: antrea-capture
+      labels: {app: antrea-capture}
     spec:
       serviceAccountName: antrea-capture
       hostNetwork: true
@@ -24,25 +20,11 @@ spec:
           securityContext:
             privileged: true
             capabilities:
-              add:
-                - NET_RAW
-                - NET_ADMIN
+              add: [NET_RAW, NET_ADMIN]
           env:
             - name: NODE_NAME
               valueFrom:
                 fieldRef:
                   fieldPath: spec.nodeName
-          resources:
-            requests:
-              cpu: 100m
-              memory: 128Mi
-            limits:
-              cpu: 500m
-              memory: 256Mi
       tolerations:
-        - key: node-role.kubernetes.io/control-plane
-          operator: Exists
-          effect: NoSchedule
-        - key: node-role.kubernetes.io/master
-          operator: Exists
-          effect: NoSchedule
+        - operator: Exists

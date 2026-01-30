@@ -40,7 +40,7 @@ cleanup:
 	@echo "Removing test pod..."
 	@kubectl delete pod test-traffic-pod -n default --ignore-not-found 2>/dev/null || true
 	@echo "Undeploying from cluster..."
-	@kubectl delete -k $(DEPLOY_DIR) --ignore-not-found 2>/dev/null || true
+	@kubectl delete -f $(DEPLOY_DIR) --ignore-not-found 2>/dev/null || true
 	@echo "Uninstalling Antrea..."
 	@if helm list -n kube-system | grep -q antrea 2>/dev/null; then \
 		helm uninstall antrea -n kube-system; \
@@ -85,7 +85,8 @@ kind-load:
 
 deploy: docker-build kind-load
 	@echo "=== Deploying to cluster ==="
-	kubectl apply -k $(DEPLOY_DIR)
+	kubectl apply -f $(DEPLOY_DIR)/rbac.yaml
+	kubectl apply -f $(DEPLOY_DIR)/daemonset.yaml
 	@echo "=== Waiting for DaemonSet to be ready ==="
 	kubectl rollout status daemonset/antrea-capture -n antrea-capture --timeout=120s
 	@echo "=== Deployment complete ==="

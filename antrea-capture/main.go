@@ -8,7 +8,6 @@ import (
 	"os/signal"
 	"syscall"
 
-	"github.com/PhantomInTheWire/antrea-capture/pkg/controller"
 	"k8s.io/client-go/kubernetes"
 	"k8s.io/client-go/rest"
 	"k8s.io/client-go/tools/clientcmd"
@@ -36,7 +35,7 @@ func main() {
 		klog.Fatalf("Failed to create k8s client: %v", err)
 	}
 
-	ctrl := controller.New(clientset, nodeName)
+	ctrl := NewController(clientset, nodeName)
 
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()

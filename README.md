@@ -22,11 +22,13 @@ make test           # Deploy test pod, annotate, collect outputs
 make cleanup        # Teardown everything
 ```
 
-## Verification
+## Deliverables
 
-All deliverables are in `outputs/`:
-- `pod-describe.txt` - Test pod with annotation
-- `pods.txt` - All pods in cluster
-- `capture-files.txt` - Pcap files listing
-- `capture-file.pcap` - Extracted capture file
-- `capture-output.txt` - Human-readable tcpdump output
+| Deliverable | Location |
+|-------------|----------|
+| Go source code | `antrea-capture/` (main.go, controller.go)
+| Dockerfile & Makefile | `Dockerfile`, `Makefile` |
+| DaemonSet manifest | `deployment/daemonset.yaml` |
+| Test Pod manifest | `test-pod.yaml` |
+| Pod describe, pods list, capture files, pcap file, tcpdump output | `outputs/` (`pod-describe.txt`, `pods.txt`, `capture-files.txt`, `capture-file.pcap`, `capture-output.txt`) |
+| README | `README.md` |

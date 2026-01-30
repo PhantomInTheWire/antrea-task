@@ -1,4 +1,4 @@
-package controller
+package main
 
 import (
 	"context"
@@ -49,7 +49,7 @@ func (s *stderrBuffer) Write(p []byte) (n int, err error) {
 	return len(p), nil
 }
 
-func New(clientset kubernetes.Interface, nodeName string) *Controller {
+func NewController(clientset kubernetes.Interface, nodeName string) *Controller {
 	return &Controller{
 		clientset: clientset,
 		nodeName:  nodeName,

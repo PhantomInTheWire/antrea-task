@@ -33,7 +33,6 @@ type Controller struct {
 	stopCh    chan struct{}
 }
 
-// stderrBuffer captures tcpdump stderr for logging
 type stderrBuffer struct {
 	podKey string
 }
@@ -147,22 +146,18 @@ func (c *Controller) processPod(pod *corev1.Pod) {
 		return
 	}
 
-	c.mu.RLock()
-	_, exists := c.captures[podKey]
-	c.mu.RUnlock()
+	c.mu.Lock()
+	defer c.mu.Unlock()
 
-	if exists {
+	if _, exists := c.captures[podKey]; exists {
 		klog.V(4).Infof("Capture already running for pod %s, skipping", podKey)
 		return
 	}
 
-	c.startCapture(podKey, pod.Name, maxFiles)
+	c.startCaptureInternal(podKey, pod.Name, maxFiles)
 }
 
-func (c *Controller) startCapture(podKey string, podName string, maxFiles int) {
-	c.mu.Lock()
-	defer c.mu.Unlock()
-
+func (c *Controller) startCaptureInternal(podKey string, podName string, maxFiles int) {
 	if _, exists := c.captures[podKey]; exists {
 		return
 	}
@@ -184,7 +179,6 @@ func (c *Controller) startCapture(podKey string, podName string, maxFiles int) {
 		Setpgid: true,
 	}
 
-	// Capture stderr to log errors
 	cmd.Stderr = &stderrBuffer{podKey: podKey}
 
 	if err := cmd.Start(); err != nil {
@@ -248,7 +242,6 @@ func (c *Controller) stopCaptureInternal(podName string, cmd *exec.Cmd) {
 }
 
 func (c *Controller) cleanupFiles(podKey string) {
-	// Extract pod name from namespace/name format
 	parts := strings.Split(podKey, "/")
 	podName := parts[len(parts)-1]
 

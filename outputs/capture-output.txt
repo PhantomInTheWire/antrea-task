@@ -1,18 +1,15 @@
+12:10:52.688616 eth0  Out IP 172.31.130.3 > 8.8.8.8: ICMP echo request, id 11, seq 1, length 64
+12:10:52.722654 eth0  In  IP 8.8.8.8 > 172.31.130.3: ICMP echo reply, id 11, seq 1, length 64
+12:10:53.676646 eth0  Out IP6 fe80::9cea:1aff:fef9:c0a0 > ff02::2: ICMP6, router solicitation, length 16
+12:10:53.689028 eth0  Out IP 172.31.130.3 > 8.8.8.8: ICMP echo request, id 11, seq 2, length 64
+12:10:53.720595 eth0  In  IP 8.8.8.8 > 172.31.130.3: ICMP echo reply, id 11, seq 2, length 64
+12:10:54.689799 eth0  Out IP 172.31.130.3 > 8.8.8.8: ICMP echo request, id 11, seq 3, length 64
+12:10:54.723941 eth0  In  IP 8.8.8.8 > 172.31.130.3: ICMP echo reply, id 11, seq 3, length 64
+12:10:55.690132 eth0  Out IP 172.31.130.3 > 8.8.8.8: ICMP echo request, id 11, seq 4, length 64
+12:10:55.721979 eth0  In  IP 8.8.8.8 > 172.31.130.3: ICMP echo reply, id 11, seq 4, length 64
+12:10:56.690630 eth0  Out IP 172.31.130.3 > 8.8.8.8: ICMP echo request, id 11, seq 5, length 64
+12:10:56.726057 eth0  In  IP 8.8.8.8 > 172.31.130.3: ICMP echo reply, id 11, seq 5, length 64
+12:10:56.749075 eth0  In  ARP, Request who-has 172.31.130.3 tell 172.31.130.1, length 28
+12:10:56.749094 eth0  Out ARP, Reply 172.31.130.3 is-at 9e:ea:1a:f9:c0:a0, length 28
 reading from file /capture-test-traffic-pod.pcap0, link-type LINUX_SLL2 (Linux cooked v2), snapshot length 262144
 Warning: interface names might be incorrect
-06:43:01.415489 eth0  Out IP 172.31.130.3 > 8.8.8.8: ICMP echo request, id 11, seq 1, length 64
-06:43:01.434856 eth0  In  IP 8.8.8.8 > 172.31.130.3: ICMP echo reply, id 11, seq 1, length 64
-06:43:02.814889 eth0  Out IP 172.31.130.3 > 8.8.8.8: ICMP echo request, id 11, seq 2, length 64
-06:43:02.834766 eth0  In  IP 8.8.8.8 > 172.31.130.3: ICMP echo reply, id 11, seq 2, length 64
-06:43:03.816611 eth0  Out IP 172.31.130.3 > 8.8.8.8: ICMP echo request, id 11, seq 3, length 64
-06:43:03.838766 eth0  In  IP 8.8.8.8 > 172.31.130.3: ICMP echo reply, id 11, seq 3, length 64
-06:43:03.893037 eth0  Out IP6 fe80::d84a:4aff:feeb:399 > ff02::2: ICMP6, router solicitation, length 16
-06:43:04.821025 eth0  Out IP 172.31.130.3 > 8.8.8.8: ICMP echo request, id 11, seq 4, length 64
-06:43:04.839934 eth0  In  IP 8.8.8.8 > 172.31.130.3: ICMP echo reply, id 11, seq 4, length 64
-06:43:05.939834 eth0  In  ARP, Request who-has 172.31.130.3 tell 172.31.130.1, length 28
-06:43:05.939844 eth0  Out ARP, Reply 172.31.130.3 is-at da:4a:4a:eb:03:99, length 28
-06:43:21.812017 eth0  Out IP6 fe80::d84a:4aff:feeb:399 > ff02::2: ICMP6, router solicitation, length 16
-06:44:00.212340 eth0  Out IP6 fe80::d84a:4aff:feeb:399 > ff02::2: ICMP6, router solicitation, length 16
-06:45:18.035613 eth0  Out IP6 fe80::d84a:4aff:feeb:399 > ff02::2: ICMP6, router solicitation, length 16
-06:47:53.687998 eth0  Out IP6 fe80::d84a:4aff:feeb:399 > ff02::2: ICMP6, router solicitation, length 16
-06:52:48.595550 eth0  Out IP6 fe80::d84a:4aff:feeb:399 > ff02::2: ICMP6, router solicitation, length 16

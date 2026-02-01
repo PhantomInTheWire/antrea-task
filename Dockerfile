@@ -1,18 +1,34 @@
-FROM golang:1.23 AS builder
+ARG GO_VERSION=1.23
+
+FROM golang:${GO_VERSION} AS builder
 
 WORKDIR /build
-COPY antrea-capture/go.mod antrea-capture/go.sum ./
 
-RUN go mod download
+RUN --mount=type=cache,target=/go/pkg/mod/ \
+    --mount=type=bind,source=antrea-capture/go.mod,target=go.mod \
+    --mount=type=bind,source=antrea-capture/go.sum,target=go.sum \
+    go mod download
+
 COPY antrea-capture/ .
-RUN CGO_ENABLED=0 GOOS=linux go build -ldflags="-w -s" -o antrea-capture .
+
+RUN --mount=type=cache,target=/go/pkg/mod/ \
+    --mount=type=cache,target=/root/.cache/go-build/ \
+    CGO_ENABLED=0 GOOS=linux go build -ldflags="-w -s" -o antrea-capture .
 
 FROM ubuntu:24.04
 
+LABEL maintainer="Karan Lokchandani"
+LABEL description="Antrea PacketCapture controller"
+
 RUN apt-get update && \
-    apt-get install -y --no-install-recommends tcpdump util-linux && \
-    rm -rf /var/lib/apt/lists/*
+    apt-get install -y --no-install-recommends \
+        bash \
+        tcpdump \
+        util-linux && \
+    rm -rf /var/lib/apt/lists/* /var/cache/apt/archives/*
+
 COPY --from=builder /build/antrea-capture /usr/local/bin/antrea-capture
 
 USER root
+
 ENTRYPOINT ["antrea-capture"]

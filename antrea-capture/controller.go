@@ -46,18 +46,7 @@ func (c *Controller) Run(ctx context.Context) error {
 	fieldSelector := fields.OneTermEqualSelector("spec.nodeName", c.nodeName).String()
 	factory := informers.NewSharedInformerFactoryWithOptions(c.clientset, time.Minute,
 		informers.WithTweakListOptions(func(o *metav1.ListOptions) { o.FieldSelector = fieldSelector }))
-	podInformer := factory.Core().V1().Pods().Informer()
-	podInformer.AddEventHandler(cache.ResourceEventHandlerFuncs{
-		AddFunc:    func(o any) { c.processPod(o.(*corev1.Pod)) },
-		UpdateFunc: func(_, n any) { c.processPod(n.(*corev1.Pod)) },
-		DeleteFunc: func(o any) {
-			pod, ok := o.(*corev1.Pod)
-			if !ok {
-				pod = o.(cache.DeletedFinalStateUnknown).Obj.(*corev1.Pod)
-			}
-			c.stopCapture(pod.Namespace + "/" + pod.Name)
-		},
-	})
+	podInformer := c.newPodInformer(factory)
 	factory.Start(c.stopCh)
 	if !cache.WaitForCacheSync(ctx.Done(), podInformer.HasSynced) {
 		return fmt.Errorf("failed to sync caches")
@@ -71,16 +60,26 @@ func (c *Controller) Shutdown() error {
 	c.mu.Lock()
 	defer c.mu.Unlock()
 	for podKey, capture := range c.captures {
-		c.stopCaptureInternal(podKey, capture)
+		c.stopCaptureProcess(podKey, capture)
 	}
 	return nil
 }
 
-func (c *Controller) processPod(pod *corev1.Pod) {
+func (c *Controller) newPodInformer(factory informers.SharedInformerFactory) cache.SharedIndexInformer {
+	podInformer := factory.Core().V1().Pods().Informer()
+	podInformer.AddEventHandler(cache.ResourceEventHandlerFuncs{
+		AddFunc:    func(o any) { c.onPodAddOrUpdate(o.(*corev1.Pod)) },
+		UpdateFunc: func(_, n any) { c.onPodAddOrUpdate(n.(*corev1.Pod)) },
+		DeleteFunc: c.onPodDelete,
+	})
+	return podInformer
+}
+
+func (c *Controller) onPodAddOrUpdate(pod *corev1.Pod) {
 	podKey := pod.Namespace + "/" + pod.Name
 	annotation := pod.Annotations[annotationKey]
 	if annotation == "" {
-		c.stopCapture(podKey)
+		c.stopCaptureForPodKey(podKey)
 		return
 	}
 	maxFiles, err := strconv.Atoi(annotation)
@@ -90,13 +89,22 @@ func (c *Controller) processPod(pod *corev1.Pod) {
 	}
 	c.mu.Lock()
 	defer c.mu.Unlock()
-	if _, exists := c.captures[podKey]; !exists {
-		c.startCaptureInternal(podKey, pod, maxFiles)
+	if _, exists := c.captures[podKey]; exists {
+		return
 	}
+	c.startCapture(podKey, pod, maxFiles)
 }
 
-func (c *Controller) startCaptureInternal(podKey string, pod *corev1.Pod, maxFiles int) {
-	pid, err := findPid(pod)
+func (c *Controller) onPodDelete(o any) {
+	pod, ok := o.(*corev1.Pod)
+	if !ok {
+		pod = o.(cache.DeletedFinalStateUnknown).Obj.(*corev1.Pod)
+	}
+	c.stopCaptureForPodKey(pod.Namespace + "/" + pod.Name)
+}
+
+func (c *Controller) startCapture(podKey string, pod *corev1.Pod, maxFiles int) {
+	pid, err := findPodPid(pod)
 	if err != nil {
 		klog.Errorf("Failed to find PID for pod %s: %v", podKey, err)
 		return
@@ -120,31 +128,17 @@ func (c *Controller) startCaptureInternal(podKey string, pod *corev1.Pod, maxFil
 	}()
 }
 
-func (c *Controller) stopCapture(podKey string) {
+func (c *Controller) stopCaptureForPodKey(podKey string) {
 	c.mu.Lock()
 	defer c.mu.Unlock()
 	if capture, exists := c.captures[podKey]; exists {
-		c.stopCaptureInternal(podKey, capture)
+		c.stopCaptureProcess(podKey, capture)
 	}
 }
 
-func (c *Controller) stopCaptureInternal(podKey string, capture *captureProcess) {
-	if capture.cmd.Process != nil {
-		_ = syscall.Kill(-capture.cmd.Process.Pid, syscall.SIGTERM)
-		done := make(chan struct{})
-		go func() { _ = capture.cmd.Wait(); close(done) }()
-		select {
-		case <-done:
-		case <-time.After(3 * time.Second):
-			_ = syscall.Kill(-capture.cmd.Process.Pid, syscall.SIGKILL)
-			<-done
-		}
-	}
+func (c *Controller) stopCaptureProcess(podKey string, capture *captureProcess) {
+	terminateProcessGroup(capture.cmd)
 	delete(c.captures, podKey)
-	c.cleanupFiles(podKey)
-}
-
-func (c *Controller) cleanupFiles(podKey string) {
 	podName := podKey[strings.LastIndex(podKey, "/")+1:]
 	matches, _ := filepath.Glob(fmt.Sprintf("/capture-%s.pcap*", podName))
 	for _, file := range matches {
@@ -152,15 +146,41 @@ func (c *Controller) cleanupFiles(podKey string) {
 	}
 }
 
-func findPid(pod *corev1.Pod) (int, error) {
+func terminateProcessGroup(cmd *exec.Cmd) {
+	if cmd.Process == nil {
+		return
+	}
+	_ = syscall.Kill(-cmd.Process.Pid, syscall.SIGTERM)
+	done := make(chan struct{})
+	go func() { _ = cmd.Wait(); close(done) }()
+	select {
+	case <-done:
+	case <-time.After(3 * time.Second):
+		_ = syscall.Kill(-cmd.Process.Pid, syscall.SIGKILL)
+		<-done
+	}
+}
+
+func findPodPid(pod *corev1.Pod) (int, error) {
+	containerID, err := containerIDFromPod(pod)
+	if err != nil {
+		return 0, err
+	}
+	return pidForContainerID(containerID, pod.Namespace, pod.Name)
+}
+
+func containerIDFromPod(pod *corev1.Pod) (string, error) {
 	if len(pod.Status.ContainerStatuses) == 0 || pod.Status.ContainerStatuses[0].ContainerID == "" {
-		return 0, fmt.Errorf("no container ID available for pod %s/%s", pod.Namespace, pod.Name)
+		return "", fmt.Errorf("no container ID available for pod %s/%s", pod.Namespace, pod.Name)
 	}
 	parts := strings.Split(pod.Status.ContainerStatuses[0].ContainerID, "://")
 	if len(parts) < 2 {
-		return 0, fmt.Errorf("invalid container ID format: %s", pod.Status.ContainerStatuses[0].ContainerID)
+		return "", fmt.Errorf("invalid container ID format: %s", pod.Status.ContainerStatuses[0].ContainerID)
 	}
-	containerID := parts[1]
+	return parts[1], nil
+}
+
+func pidForContainerID(containerID string, namespace string, name string) (int, error) {
 	entries, err := os.ReadDir(hostProcPath)
 	if err != nil {
 		return 0, fmt.Errorf("failed to read /proc directory: %w", err)
@@ -173,5 +193,9 @@ func findPid(pod *corev1.Pod) (int, error) {
 			}
 		}
 	}
-	return 0, fmt.Errorf("could not find process ID for container %s in pod %s/%s", containerID[:12], pod.Namespace, pod.Name)
+	shortID := containerID
+	if len(shortID) > 12 {
+		shortID = shortID[:12]
+	}
+	return 0, fmt.Errorf("could not find process ID for container %s in pod %s/%s", shortID, namespace, name)
 }

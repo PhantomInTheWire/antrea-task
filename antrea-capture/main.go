@@ -16,24 +16,40 @@ import (
 func main() {
 	klog.InitFlags(nil)
 	flag.Parse()
-	node := os.Getenv("NODE_NAME")
-	if node == "" {
-		klog.Fatal("NODE_NAME required")
-	}
-	cfg, err := rest.InClusterConfig()
-	if err != nil {
-		cfg, err = clientcmd.BuildConfigFromFlags("", clientcmd.RecommendedHomeFile)
-		if err != nil {
-			klog.Fatal(err)
-		}
-	}
-	cs, err := kubernetes.NewForConfig(cfg)
-	if err != nil {
-		klog.Fatal(err)
-	}
+	node := requireNodeName()
+	cfg := loadKubeConfig()
+	cs := newClientset(cfg)
 	ctx, cancel := signal.NotifyContext(context.Background(), syscall.SIGINT, syscall.SIGTERM)
 	defer cancel()
 	if err := NewController(cs, node).Run(ctx); err != nil {
 		klog.Fatal(err)
 	}
+}
+
+func requireNodeName() string {
+	node := os.Getenv("NODE_NAME")
+	if node == "" {
+		klog.Fatal("NODE_NAME required")
+	}
+	return node
+}
+
+func loadKubeConfig() *rest.Config {
+	cfg, err := rest.InClusterConfig()
+	if err == nil {
+		return cfg
+	}
+	cfg, err = clientcmd.BuildConfigFromFlags("", clientcmd.RecommendedHomeFile)
+	if err != nil {
+		klog.Fatal(err)
+	}
+	return cfg
+}
+
+func newClientset(cfg *rest.Config) kubernetes.Interface {
+	cs, err := kubernetes.NewForConfig(cfg)
+	if err != nil {
+		klog.Fatal(err)
+	}
+	return cs
 }

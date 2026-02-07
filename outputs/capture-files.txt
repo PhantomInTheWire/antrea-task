@@ -1,1 +1,1 @@
--rw-r--r-- 1 root root 2424 Feb  7 10:05 /capture-default-test-traffic-pod.pcap0
+-rw-r--r-- 1 root root 2680 Feb  7 10:26 /capture-default-test-traffic-pod.pcap0

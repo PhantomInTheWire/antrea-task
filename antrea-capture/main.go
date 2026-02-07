@@ -17,8 +17,7 @@ func main() {
 	klog.InitFlags(nil)
 	flag.Parse()
 	node := requireNodeName()
-	cfg := loadKubeConfig()
-	cs := newClientset(cfg)
+	cs := mustNewClientset()
 	ctx, cancel := signal.NotifyContext(context.Background(), syscall.SIGINT, syscall.SIGTERM)
 	defer cancel()
 	if err := NewController(cs, node).Run(ctx); err != nil {
@@ -34,19 +33,14 @@ func requireNodeName() string {
 	return node
 }
 
-func loadKubeConfig() *rest.Config {
+func mustNewClientset() kubernetes.Interface {
 	cfg, err := rest.InClusterConfig()
-	if err == nil {
-		return cfg
-	}
-	cfg, err = clientcmd.BuildConfigFromFlags("", clientcmd.RecommendedHomeFile)
 	if err != nil {
-		klog.Fatal(err)
+		cfg, err = clientcmd.BuildConfigFromFlags("", clientcmd.RecommendedHomeFile)
+		if err != nil {
+			klog.Fatal(err)
+		}
 	}
-	return cfg
-}
-
-func newClientset(cfg *rest.Config) kubernetes.Interface {
 	cs, err := kubernetes.NewForConfig(cfg)
 	if err != nil {
 		klog.Fatal(err)

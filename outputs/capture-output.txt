@@ -1,22 +1,26 @@
 reading from file /capture-default-test-traffic-pod.pcap0, link-type LINUX_SLL2 (Linux cooked v2), snapshot length 262144
 Warning: interface names might be incorrect
-10:05:06.513260 test-tra-c487c4 P   IP 172.31.129.4 > 8.8.8.8: ICMP echo request, id 13, seq 0, length 64
-10:05:06.513291 antrea-gw0 In  IP 172.31.129.4 > 8.8.8.8: ICMP echo request, id 13, seq 0, length 64
-10:05:06.530025 antrea-gw0 Out IP 8.8.8.8 > 172.31.129.4: ICMP echo reply, id 13, seq 0, length 64
-10:05:06.530048 test-tra-c487c4 Out IP 8.8.8.8 > 172.31.129.4: ICMP echo reply, id 13, seq 0, length 64
-10:05:07.532094 test-tra-c487c4 P   IP 172.31.129.4 > 8.8.8.8: ICMP echo request, id 15, seq 0, length 64
-10:05:07.532227 antrea-gw0 In  IP 172.31.129.4 > 8.8.8.8: ICMP echo request, id 15, seq 0, length 64
-10:05:07.554957 antrea-gw0 Out IP 8.8.8.8 > 172.31.129.4: ICMP echo reply, id 15, seq 0, length 64
-10:05:07.554970 test-tra-c487c4 Out IP 8.8.8.8 > 172.31.129.4: ICMP echo reply, id 15, seq 0, length 64
-10:05:08.559166 test-tra-c487c4 P   IP 172.31.129.4 > 8.8.8.8: ICMP echo request, id 17, seq 0, length 64
-10:05:08.559227 antrea-gw0 In  IP 172.31.129.4 > 8.8.8.8: ICMP echo request, id 17, seq 0, length 64
-10:05:08.578040 antrea-gw0 Out IP 8.8.8.8 > 172.31.129.4: ICMP echo reply, id 17, seq 0, length 64
-10:05:08.578059 test-tra-c487c4 Out IP 8.8.8.8 > 172.31.129.4: ICMP echo reply, id 17, seq 0, length 64
-10:05:09.582959 test-tra-c487c4 P   IP 172.31.129.4 > 8.8.8.8: ICMP echo request, id 19, seq 0, length 64
-10:05:09.583007 antrea-gw0 In  IP 172.31.129.4 > 8.8.8.8: ICMP echo request, id 19, seq 0, length 64
-10:05:09.604324 antrea-gw0 Out IP 8.8.8.8 > 172.31.129.4: ICMP echo reply, id 19, seq 0, length 64
-10:05:09.604346 test-tra-c487c4 Out IP 8.8.8.8 > 172.31.129.4: ICMP echo reply, id 19, seq 0, length 64
-10:05:10.609754 test-tra-c487c4 P   IP 172.31.129.4 > 8.8.8.8: ICMP echo request, id 21, seq 0, length 64
-10:05:10.609795 antrea-gw0 In  IP 172.31.129.4 > 8.8.8.8: ICMP echo request, id 21, seq 0, length 64
-10:05:10.629355 antrea-gw0 Out IP 8.8.8.8 > 172.31.129.4: ICMP echo reply, id 21, seq 0, length 64
-10:05:10.629377 test-tra-c487c4 Out IP 8.8.8.8 > 172.31.129.4: ICMP echo reply, id 21, seq 0, length 64
+10:26:54.579626 test-tra-c43659 P   IP 172.31.129.2 > 8.8.8.8: ICMP echo request, id 12, seq 0, length 64
+10:26:54.579657 antrea-gw0 In  IP 172.31.129.2 > 8.8.8.8: ICMP echo request, id 12, seq 0, length 64
+10:26:54.598276 antrea-gw0 Out IP 8.8.8.8 > 172.31.129.2: ICMP echo reply, id 12, seq 0, length 64
+10:26:54.598290 test-tra-c43659 Out IP 8.8.8.8 > 172.31.129.2: ICMP echo reply, id 12, seq 0, length 64
+10:26:55.604325 test-tra-c43659 P   IP 172.31.129.2 > 8.8.8.8: ICMP echo request, id 14, seq 0, length 64
+10:26:55.604431 antrea-gw0 In  IP 172.31.129.2 > 8.8.8.8: ICMP echo request, id 14, seq 0, length 64
+10:26:55.623653 antrea-gw0 Out IP 8.8.8.8 > 172.31.129.2: ICMP echo reply, id 14, seq 0, length 64
+10:26:55.623688 test-tra-c43659 Out IP 8.8.8.8 > 172.31.129.2: ICMP echo reply, id 14, seq 0, length 64
+10:26:56.629935 test-tra-c43659 P   IP 172.31.129.2 > 8.8.8.8: ICMP echo request, id 16, seq 0, length 64
+10:26:56.629992 antrea-gw0 In  IP 172.31.129.2 > 8.8.8.8: ICMP echo request, id 16, seq 0, length 64
+10:26:56.652030 antrea-gw0 Out IP 8.8.8.8 > 172.31.129.2: ICMP echo reply, id 16, seq 0, length 64
+10:26:56.652063 test-tra-c43659 Out IP 8.8.8.8 > 172.31.129.2: ICMP echo reply, id 16, seq 0, length 64
+10:26:57.664201 test-tra-c43659 P   IP 172.31.129.2 > 8.8.8.8: ICMP echo request, id 18, seq 0, length 64
+10:26:57.664272 antrea-gw0 In  IP 172.31.129.2 > 8.8.8.8: ICMP echo request, id 18, seq 0, length 64
+10:26:57.681279 antrea-gw0 Out IP 8.8.8.8 > 172.31.129.2: ICMP echo reply, id 18, seq 0, length 64
+10:26:57.681298 test-tra-c43659 Out IP 8.8.8.8 > 172.31.129.2: ICMP echo reply, id 18, seq 0, length 64
+10:26:58.688475 test-tra-c43659 P   IP 172.31.129.2 > 8.8.8.8: ICMP echo request, id 20, seq 0, length 64
+10:26:58.688580 antrea-gw0 In  IP 172.31.129.2 > 8.8.8.8: ICMP echo request, id 20, seq 0, length 64
+10:26:58.709582 antrea-gw0 Out IP 8.8.8.8 > 172.31.129.2: ICMP echo reply, id 20, seq 0, length 64
+10:26:58.709632 test-tra-c43659 Out IP 8.8.8.8 > 172.31.129.2: ICMP echo reply, id 20, seq 0, length 64
+10:26:58.997909 antrea-gw0 Out ARP, Request who-has 172.31.129.2 tell 172.31.129.1, length 28
+10:26:58.998679 test-tra-c43659 Out ARP, Request who-has 172.31.129.2 tell 172.31.129.1, length 28
+10:26:58.998694 test-tra-c43659 P   ARP, Reply 172.31.129.2 is-at 8a:1b:38:80:db:75, length 28
+10:26:58.998838 antrea-gw0 In  ARP, Reply 172.31.129.2 is-at 8a:1b:38:80:db:75, length 28

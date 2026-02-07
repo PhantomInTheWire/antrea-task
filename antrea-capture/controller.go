@@ -58,10 +58,15 @@ func (c *Controller) Run(ctx context.Context) error {
 
 func (c *Controller) Shutdown() error {
 	close(c.stopCh)
+	var captures []*captureProcess
 	c.mu.Lock()
-	defer c.mu.Unlock()
 	for podKey, capture := range c.captures {
-		c.stopCaptureProcess(podKey, capture)
+		captures = append(captures, capture)
+		delete(c.captures, podKey)
+	}
+	c.mu.Unlock()
+	for _, capture := range captures {
+		c.stopCaptureProcess(capture)
 	}
 	return nil
 }
@@ -89,13 +94,19 @@ func (c *Controller) onPodAddOrUpdate(pod *corev1.Pod) {
 		c.stopCaptureForPodKey(podKey)
 		return
 	}
+	var capture *captureProcess
 	c.mu.Lock()
-	defer c.mu.Unlock()
-	if capture, exists := c.captures[podKey]; exists {
-		if capture.maxFiles == maxFiles {
+	if existing, ok := c.captures[podKey]; ok {
+		if existing.maxFiles == maxFiles {
+			c.mu.Unlock()
 			return
 		}
-		c.stopCaptureProcess(podKey, capture)
+		capture = existing
+		delete(c.captures, podKey)
+	}
+	c.mu.Unlock()
+	if capture != nil {
+		c.stopCaptureProcess(capture)
 	}
 	c.startCapture(podKey, pod, maxFiles)
 }
@@ -114,8 +125,7 @@ func (c *Controller) startCapture(podKey string, pod *corev1.Pod, maxFiles int) 
 		klog.Errorf("Pod %s has no IP", podKey)
 		return
 	}
-	captureID := fmt.Sprintf("%s-%s", pod.Namespace, pod.Name)
-	captureFile := fmt.Sprintf("/capture-%s.pcap", captureID)
+	captureFile := fmt.Sprintf("/capture-%s-%s.pcap", pod.Namespace, pod.Name)
 	cmd := exec.Command("tcpdump", "-i", "any", "-U", "-C", "1", "-W", strconv.Itoa(maxFiles), "-w", captureFile, "-Z", "root", "host", podIP)
 	cmd.SysProcAttr = &syscall.SysProcAttr{Setpgid: true}
 	cmd.Stderr = os.Stderr
@@ -125,7 +135,9 @@ func (c *Controller) startCapture(podKey string, pod *corev1.Pod, maxFiles int) 
 	}
 	klog.Infof("Started capture for pod %s (IP %s)", podKey, podIP)
 	done := make(chan struct{})
+	c.mu.Lock()
 	c.captures[podKey] = &captureProcess{cmd: cmd, done: done, maxFiles: maxFiles, captureGlob: captureFile + "*"}
+	c.mu.Unlock()
 	go func() {
 		_ = cmd.Wait()
 		close(done)
@@ -136,16 +148,20 @@ func (c *Controller) startCapture(podKey string, pod *corev1.Pod, maxFiles int) 
 }
 
 func (c *Controller) stopCaptureForPodKey(podKey string) {
+	var capture *captureProcess
 	c.mu.Lock()
-	defer c.mu.Unlock()
-	if capture, exists := c.captures[podKey]; exists {
-		c.stopCaptureProcess(podKey, capture)
+	if existing, ok := c.captures[podKey]; ok {
+		capture = existing
+		delete(c.captures, podKey)
+	}
+	c.mu.Unlock()
+	if capture != nil {
+		c.stopCaptureProcess(capture)
 	}
 }
 
-func (c *Controller) stopCaptureProcess(podKey string, capture *captureProcess) {
+func (c *Controller) stopCaptureProcess(capture *captureProcess) {
 	terminateProcessGroup(capture)
-	delete(c.captures, podKey)
 	matches, _ := filepath.Glob(capture.captureGlob)
 	for _, file := range matches {
 		_ = os.Remove(file)

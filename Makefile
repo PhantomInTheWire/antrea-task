@@ -35,8 +35,12 @@ deploy: docker-build
 test:
 	@kubectl apply -f test-pod.yaml
 	@kubectl wait --for=condition=ready pod/test-traffic-pod -n default --timeout=60s
+	@echo "Starting capture..."
 	@kubectl annotate pod test-traffic-pod -n default tcpdump.antrea.io="5"
 	@sleep 5
+	@echo "Stopping capture..."
+	@kubectl annotate pod test-traffic-pod -n default tcpdump.antrea.io- 
+	@sleep 1
 	@mkdir -p outputs
 	@kubectl describe pod test-traffic-pod -n default > outputs/pod-describe.txt
 	@kubectl get pods -A > outputs/pods.txt

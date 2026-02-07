@@ -36,11 +36,10 @@ type Controller struct {
 	nodeName  string
 	captures  map[string]*captureProcess
 	mu        sync.RWMutex
-	stopCh    chan struct{}
 }
 
 func NewController(cs kubernetes.Interface, node string) *Controller {
-	return &Controller{clientset: cs, nodeName: node, captures: make(map[string]*captureProcess), stopCh: make(chan struct{})}
+	return &Controller{clientset: cs, nodeName: node, captures: make(map[string]*captureProcess)}
 }
 
 func (c *Controller) Run(ctx context.Context) error {
@@ -48,7 +47,7 @@ func (c *Controller) Run(ctx context.Context) error {
 	factory := informers.NewSharedInformerFactoryWithOptions(c.clientset, time.Minute,
 		informers.WithTweakListOptions(func(o *metav1.ListOptions) { o.FieldSelector = fieldSelector }))
 	podInformer := c.newPodInformer(factory)
-	factory.Start(c.stopCh)
+	factory.Start(ctx.Done())
 	if !cache.WaitForCacheSync(ctx.Done(), podInformer.HasSynced) {
 		return fmt.Errorf("failed to sync caches")
 	}
@@ -57,7 +56,6 @@ func (c *Controller) Run(ctx context.Context) error {
 }
 
 func (c *Controller) Shutdown() error {
-	close(c.stopCh)
 	var captures []*captureProcess
 	c.mu.Lock()
 	for podKey, capture := range c.captures {
@@ -122,20 +120,14 @@ func (c *Controller) onPodDelete(o any) {
 }
 
 func (c *Controller) startCapture(podKey string, pod *corev1.Pod, maxFiles int) {
-	podIP := pod.Status.PodIP
-	if podIP == "" {
-		klog.Errorf("Pod %s has no IP", podKey)
-		return
-	}
 	captureFile := fmt.Sprintf("/capture-%s.pcap", pod.Name)
-	cmd := exec.Command("tcpdump", "-i", "any", "-U", "-C", "1", "-W", strconv.Itoa(maxFiles), "-w", captureFile, "-Z", "root", "host", podIP)
-	cmd.SysProcAttr = &syscall.SysProcAttr{Setpgid: true}
+	cmd := exec.Command("tcpdump", "-C", "1", "-W", strconv.Itoa(maxFiles), "-w", captureFile, "-Z", "root")
 	cmd.Stderr = os.Stderr
 	if err := cmd.Start(); err != nil {
 		klog.Errorf("Failed to start tcpdump for pod %s: %v", podKey, err)
 		return
 	}
-	klog.Infof("Started capture for pod %s (IP %s)", podKey, podIP)
+	klog.Infof("Started capture for pod %s", podKey)
 	done := make(chan struct{})
 	c.mu.Lock()
 	c.captures[podKey] = &captureProcess{cmd: cmd, done: done, maxFiles: maxFiles, captureGlob: captureFile + "*"}
@@ -163,14 +155,6 @@ func (c *Controller) stopCaptureForPodKey(podKey string) {
 }
 
 func (c *Controller) stopCaptureProcess(capture *captureProcess) {
-	terminateProcessGroup(capture)
-	matches, _ := filepath.Glob(capture.captureGlob)
-	for _, file := range matches {
-		_ = os.Remove(file)
-	}
-}
-
-func terminateProcessGroup(capture *captureProcess) {
 	if capture == nil || capture.cmd == nil || capture.cmd.Process == nil {
 		return
 	}
@@ -179,11 +163,11 @@ func terminateProcessGroup(capture *captureProcess) {
 		return
 	default:
 	}
-	_ = syscall.Kill(-capture.cmd.Process.Pid, syscall.SIGTERM)
-	select {
-	case <-capture.done:
-	case <-time.After(3 * time.Second):
-		_ = syscall.Kill(-capture.cmd.Process.Pid, syscall.SIGKILL)
-		<-capture.done
+	_ = capture.cmd.Process.Signal(syscall.SIGTERM)
+	<-capture.done
+	time.Sleep(3 * time.Second)
+	matches, _ := filepath.Glob(capture.captureGlob)
+	for _, file := range matches {
+		_ = os.Remove(file)
 	}
 }

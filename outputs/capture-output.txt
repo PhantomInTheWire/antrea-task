@@ -1,26 +1,46 @@
-12:16:33.607914 test-tra-e78f27 P   IP 172.31.130.2 > 8.8.8.8: ICMP echo request, id 13, seq 0, length 64
-12:16:33.607986 antrea-gw0 In  IP 172.31.130.2 > 8.8.8.8: ICMP echo request, id 13, seq 0, length 64
-12:16:33.626215 antrea-gw0 Out IP 8.8.8.8 > 172.31.130.2: ICMP echo reply, id 13, seq 0, length 64
-12:16:33.626242 test-tra-e78f27 Out IP 8.8.8.8 > 172.31.130.2: ICMP echo reply, id 13, seq 0, length 64
-12:16:34.630654 test-tra-e78f27 P   IP 172.31.130.2 > 8.8.8.8: ICMP echo request, id 15, seq 0, length 64
-12:16:34.630682 antrea-gw0 In  IP 172.31.130.2 > 8.8.8.8: ICMP echo request, id 15, seq 0, length 64
-12:16:34.649489 antrea-gw0 Out IP 8.8.8.8 > 172.31.130.2: ICMP echo reply, id 15, seq 0, length 64
-12:16:34.649519 test-tra-e78f27 Out IP 8.8.8.8 > 172.31.130.2: ICMP echo reply, id 15, seq 0, length 64
-12:16:35.653640 test-tra-e78f27 P   IP 172.31.130.2 > 8.8.8.8: ICMP echo request, id 17, seq 0, length 64
-12:16:35.653670 antrea-gw0 In  IP 172.31.130.2 > 8.8.8.8: ICMP echo request, id 17, seq 0, length 64
-12:16:35.672591 antrea-gw0 Out IP 8.8.8.8 > 172.31.130.2: ICMP echo reply, id 17, seq 0, length 64
-12:16:35.672607 test-tra-e78f27 Out IP 8.8.8.8 > 172.31.130.2: ICMP echo reply, id 17, seq 0, length 64
-12:16:36.678561 test-tra-e78f27 P   IP 172.31.130.2 > 8.8.8.8: ICMP echo request, id 19, seq 0, length 64
-12:16:36.678648 antrea-gw0 In  IP 172.31.130.2 > 8.8.8.8: ICMP echo request, id 19, seq 0, length 64
-12:16:36.697797 antrea-gw0 Out IP 8.8.8.8 > 172.31.130.2: ICMP echo reply, id 19, seq 0, length 64
-12:16:36.697823 test-tra-e78f27 Out IP 8.8.8.8 > 172.31.130.2: ICMP echo reply, id 19, seq 0, length 64
-12:16:37.682704 antrea-gw0 Out ARP, Request who-has 172.31.130.2 tell 172.31.130.1, length 28
-12:16:37.683139 test-tra-e78f27 Out ARP, Request who-has 172.31.130.2 tell 172.31.130.1, length 28
-12:16:37.683159 test-tra-e78f27 P   ARP, Reply 172.31.130.2 is-at 72:7f:76:74:45:b6, length 28
-12:16:37.683307 antrea-gw0 In  ARP, Reply 172.31.130.2 is-at 72:7f:76:74:45:b6, length 28
-12:16:37.706466 test-tra-e78f27 P   IP 172.31.130.2 > 8.8.8.8: ICMP echo request, id 21, seq 0, length 64
-12:16:37.706554 antrea-gw0 In  IP 172.31.130.2 > 8.8.8.8: ICMP echo request, id 21, seq 0, length 64
-12:16:37.726823 antrea-gw0 Out IP 8.8.8.8 > 172.31.130.2: ICMP echo reply, id 21, seq 0, length 64
-12:16:37.726847 test-tra-e78f27 Out IP 8.8.8.8 > 172.31.130.2: ICMP echo reply, id 21, seq 0, length 64
-reading from file /capture-test-traffic-pod.pcap0, link-type LINUX_SLL2 (Linux cooked v2), snapshot length 262144
-Warning: interface names might be incorrect
+reading from file /capture-test-traffic-pod.pcap0, link-type EN10MB (Ethernet), snapshot length 262144
+13:44:20.289958 IP 192.168.147.2.10351 > 192.168.147.4.10351: UDP, length 107
+13:44:20.290117 IP 192.168.147.4.10351 > 192.168.147.2.10351: UDP, length 18
+13:44:20.530831 IP6 fe80::c893:c6ff:fe3f:efe2 > fe80::8046:8bff:fec9:56d1: ICMP6, neighbor solicitation, who has fe80::8046:8bff:fec9:56d1, length 32
+13:44:20.530921 IP6 fe80::8046:8bff:fec9:56d1 > fe80::c893:c6ff:fe3f:efe2: ICMP6, neighbor advertisement, tgt is fe80::8046:8bff:fec9:56d1, length 24
+13:44:20.900290 IP 192.168.147.4 > 8.8.8.8: ICMP echo request, id 13, seq 0, length 64
+13:44:20.919042 IP 8.8.8.8 > 192.168.147.4: ICMP echo reply, id 13, seq 0, length 64
+13:44:21.128785 IP 192.168.147.4.10351 > 192.168.147.2.10351: UDP, length 107
+13:44:21.133414 IP 192.168.147.2.10351 > 192.168.147.4.10351: UDP, length 18
+13:44:21.930651 IP 192.168.147.4 > 8.8.8.8: ICMP echo request, id 15, seq 0, length 64
+13:44:21.947681 IP 8.8.8.8 > 192.168.147.4: ICMP echo reply, id 15, seq 0, length 64
+13:44:22.077911 IP 192.168.147.3.10351 > 192.168.147.4.10351: UDP, length 100
+13:44:22.078844 IP 192.168.147.4.10351 > 192.168.147.3.10351: UDP, length 18
+13:44:22.128748 IP 192.168.147.4.10351 > 192.168.147.3.10351: UDP, length 100
+13:44:22.129163 IP 192.168.147.3.10351 > 192.168.147.4.10351: UDP, length 18
+13:44:22.289949 IP 192.168.147.2.10351 > 192.168.147.4.10351: UDP, length 107
+13:44:22.290361 IP 192.168.147.4.10351 > 192.168.147.2.10351: UDP, length 18
+13:44:22.951799 IP 192.168.147.4 > 8.8.8.8: ICMP echo request, id 17, seq 0, length 64
+13:44:22.969177 IP 8.8.8.8 > 192.168.147.4: ICMP echo reply, id 17, seq 0, length 64
+13:44:23.128695 IP 192.168.147.4.10351 > 192.168.147.2.10351: UDP, length 107
+13:44:23.129153 IP 192.168.147.2.10351 > 192.168.147.4.10351: UDP, length 18
+13:44:23.972911 IP 192.168.147.4 > 8.8.8.8: ICMP echo request, id 19, seq 0, length 64
+13:44:23.994375 IP 8.8.8.8 > 192.168.147.4: ICMP echo reply, id 19, seq 0, length 64
+13:44:24.070883 IP 192.168.147.4.36822 > 192.168.147.3.10351: Flags [S], seq 817735462, win 64240, options [mss 1460,sackOK,TS val 3411877954 ecr 0,nop,wscale 10], length 0
+13:44:24.071049 IP 192.168.147.3.10351 > 192.168.147.4.36822: Flags [S.], seq 1577177155, ack 817735463, win 65160, options [mss 1460,sackOK,TS val 214743683 ecr 3411877954,nop,wscale 10], length 0
+13:44:24.071096 IP 192.168.147.4.36822 > 192.168.147.3.10351: Flags [.], ack 1, win 63, options [nop,nop,TS val 3411877954 ecr 214743683], length 0
+13:44:24.072019 IP 192.168.147.4.36822 > 192.168.147.3.10351: Flags [P.], seq 1:238, ack 1, win 63, options [nop,nop,TS val 3411877955 ecr 214743683], length 237
+13:44:24.072047 IP 192.168.147.3.10351 > 192.168.147.4.36822: Flags [.], ack 238, win 64, options [nop,nop,TS val 214743684 ecr 3411877955], length 0
+13:44:24.072893 IP 192.168.147.3.10351 > 192.168.147.4.36822: Flags [P.], seq 1:238, ack 238, win 64, options [nop,nop,TS val 214743685 ecr 3411877955], length 237
+13:44:24.072917 IP 192.168.147.4.36822 > 192.168.147.3.10351: Flags [.], ack 238, win 63, options [nop,nop,TS val 3411877956 ecr 214743685], length 0
+13:44:24.073121 IP 192.168.147.4.36822 > 192.168.147.3.10351: Flags [F.], seq 238, ack 238, win 63, options [nop,nop,TS val 3411877956 ecr 214743685], length 0
+13:44:24.073292 IP 192.168.147.3.10351 > 192.168.147.4.36822: Flags [F.], seq 238, ack 239, win 64, options [nop,nop,TS val 214743685 ecr 3411877956], length 0
+13:44:24.073303 IP 192.168.147.4.36822 > 192.168.147.3.10351: Flags [.], ack 239, win 63, options [nop,nop,TS val 3411877956 ecr 214743685], length 0
+13:44:24.077106 IP 192.168.147.3.10351 > 192.168.147.4.10351: UDP, length 100
+13:44:24.077506 IP 192.168.147.4.10351 > 192.168.147.3.10351: UDP, length 18
+13:44:24.129277 IP 192.168.147.4.10351 > 192.168.147.2.10351: UDP, length 107
+13:44:24.129866 IP 192.168.147.2.10351 > 192.168.147.4.10351: UDP, length 18
+13:44:24.249720 IP 192.168.147.4.59756 > 192.168.147.3.10349: Flags [P.], seq 2593784649:2593784688, ack 707812229, win 73, options [nop,nop,TS val 3411878133 ecr 214713860], length 39
+13:44:24.250444 IP 192.168.147.3.10349 > 192.168.147.4.59756: Flags [P.], seq 1:40, ack 39, win 70, options [nop,nop,TS val 214743862 ecr 3411878133], length 39
+13:44:24.289884 IP 192.168.147.2.10351 > 192.168.147.4.10351: UDP, length 107
+13:44:24.290687 IP 192.168.147.4.59756 > 192.168.147.3.10349: Flags [.], ack 40, win 73, options [nop,nop,TS val 3411878174 ecr 214743862], length 0
+13:44:24.290687 IP 192.168.147.4.10351 > 192.168.147.2.10351: UDP, length 18
+13:44:25.002932 IP 192.168.147.4 > 8.8.8.8: ICMP echo request, id 21, seq 0, length 64
+13:44:25.021942 IP 8.8.8.8 > 192.168.147.4: ICMP echo reply, id 21, seq 0, length 64
+13:44:25.128455 IP 192.168.147.4.10351 > 192.168.147.3.10351: UDP, length 100
+13:44:25.129286 IP 192.168.147.3.10351 > 192.168.147.4.10351: UDP, length 18

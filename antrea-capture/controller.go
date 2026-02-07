@@ -7,7 +7,6 @@ import (
 	"os/exec"
 	"path/filepath"
 	"strconv"
-	"strings"
 	"sync"
 	"syscall"
 	"time"
@@ -26,7 +25,10 @@ const (
 )
 
 type captureProcess struct {
-	cmd *exec.Cmd
+	cmd         *exec.Cmd
+	done        chan struct{}
+	maxFiles    int
+	captureGlob string
 }
 
 type Controller struct {
@@ -84,12 +86,16 @@ func (c *Controller) onPodAddOrUpdate(pod *corev1.Pod) {
 	maxFiles, err := strconv.Atoi(annotation)
 	if err != nil || maxFiles <= 0 {
 		klog.Errorf("Invalid annotation value '%s' for pod %s: %v", annotation, podKey, err)
+		c.stopCaptureForPodKey(podKey)
 		return
 	}
 	c.mu.Lock()
 	defer c.mu.Unlock()
-	if _, exists := c.captures[podKey]; exists {
-		return
+	if capture, exists := c.captures[podKey]; exists {
+		if capture.maxFiles == maxFiles {
+			return
+		}
+		c.stopCaptureProcess(podKey, capture)
 	}
 	c.startCapture(podKey, pod, maxFiles)
 }
@@ -108,7 +114,8 @@ func (c *Controller) startCapture(podKey string, pod *corev1.Pod, maxFiles int) 
 		klog.Errorf("Pod %s has no IP", podKey)
 		return
 	}
-	captureFile := fmt.Sprintf("/capture-%s.pcap", pod.Name)
+	captureID := fmt.Sprintf("%s-%s", pod.Namespace, pod.Name)
+	captureFile := fmt.Sprintf("/capture-%s.pcap", captureID)
 	cmd := exec.Command("tcpdump", "-i", "any", "-U", "-C", "1", "-W", strconv.Itoa(maxFiles), "-w", captureFile, "-Z", "root", "host", podIP)
 	cmd.SysProcAttr = &syscall.SysProcAttr{Setpgid: true}
 	cmd.Stderr = os.Stderr
@@ -117,9 +124,11 @@ func (c *Controller) startCapture(podKey string, pod *corev1.Pod, maxFiles int) 
 		return
 	}
 	klog.Infof("Started capture for pod %s (IP %s)", podKey, podIP)
-	c.captures[podKey] = &captureProcess{cmd: cmd}
+	done := make(chan struct{})
+	c.captures[podKey] = &captureProcess{cmd: cmd, done: done, maxFiles: maxFiles, captureGlob: captureFile + "*"}
 	go func() {
 		_ = cmd.Wait()
+		close(done)
 		c.mu.Lock()
 		delete(c.captures, podKey)
 		c.mu.Unlock()
@@ -135,26 +144,28 @@ func (c *Controller) stopCaptureForPodKey(podKey string) {
 }
 
 func (c *Controller) stopCaptureProcess(podKey string, capture *captureProcess) {
-	terminateProcessGroup(capture.cmd)
+	terminateProcessGroup(capture)
 	delete(c.captures, podKey)
-	podName := podKey[strings.LastIndex(podKey, "/")+1:]
-	matches, _ := filepath.Glob(fmt.Sprintf("/capture-%s.pcap*", podName))
+	matches, _ := filepath.Glob(capture.captureGlob)
 	for _, file := range matches {
 		_ = os.Remove(file)
 	}
 }
 
-func terminateProcessGroup(cmd *exec.Cmd) {
-	if cmd.Process == nil {
+func terminateProcessGroup(capture *captureProcess) {
+	if capture == nil || capture.cmd == nil || capture.cmd.Process == nil {
 		return
 	}
-	_ = syscall.Kill(-cmd.Process.Pid, syscall.SIGTERM)
-	done := make(chan struct{})
-	go func() { _ = cmd.Wait(); close(done) }()
 	select {
-	case <-done:
+	case <-capture.done:
+		return
+	default:
+	}
+	_ = syscall.Kill(-capture.cmd.Process.Pid, syscall.SIGTERM)
+	select {
+	case <-capture.done:
 	case <-time.After(3 * time.Second):
-		_ = syscall.Kill(-cmd.Process.Pid, syscall.SIGKILL)
-		<-done
+		_ = syscall.Kill(-capture.cmd.Process.Pid, syscall.SIGKILL)
+		<-capture.done
 	}
 }

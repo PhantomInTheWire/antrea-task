@@ -21,6 +21,7 @@ docker-build:
 
 cluster-setup:
 	@kind get clusters | grep -q $(CLUSTER) || kind create cluster --config kind-config.yaml --name $(CLUSTER)
+	@kind export kubeconfig --name $(CLUSTER)
 	@helm repo list | grep -q antrea || helm repo add antrea https://charts.antrea.io
 	@helm repo update
 	@helm list -n kube-system | grep -q antrea || (helm install antrea antrea/antrea -n kube-system --create-namespace && kubectl wait --for=condition=ready pod -l app=antrea -n kube-system --timeout=120s)

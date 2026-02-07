@@ -73,11 +73,13 @@ func (c *Controller) Shutdown() error {
 
 func (c *Controller) newPodInformer(factory informers.SharedInformerFactory) cache.SharedIndexInformer {
 	podInformer := factory.Core().V1().Pods().Informer()
-	podInformer.AddEventHandler(cache.ResourceEventHandlerFuncs{
+	if _, err := podInformer.AddEventHandler(cache.ResourceEventHandlerFuncs{
 		AddFunc:    func(o any) { c.onPodAddOrUpdate(o.(*corev1.Pod)) },
 		UpdateFunc: func(_, n any) { c.onPodAddOrUpdate(n.(*corev1.Pod)) },
 		DeleteFunc: c.onPodDelete,
-	})
+	}); err != nil {
+		klog.Errorf("Failed to add event handler: %v", err)
+	}
 	return podInformer
 }
 
@@ -125,7 +127,7 @@ func (c *Controller) startCapture(podKey string, pod *corev1.Pod, maxFiles int) 
 		klog.Errorf("Pod %s has no IP", podKey)
 		return
 	}
-	captureFile := fmt.Sprintf("/capture-%s-%s.pcap", pod.Namespace, pod.Name)
+	captureFile := fmt.Sprintf("/capture-%s.pcap", pod.Name)
 	cmd := exec.Command("tcpdump", "-i", "any", "-U", "-C", "1", "-W", strconv.Itoa(maxFiles), "-w", captureFile, "-Z", "root", "host", podIP)
 	cmd.SysProcAttr = &syscall.SysProcAttr{Setpgid: true}
 	cmd.Stderr = os.Stderr

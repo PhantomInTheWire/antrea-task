@@ -13,10 +13,8 @@ spec:
         - /bin/sh
         - -c
         - |
-          echo "Starting traffic generation for 5 seconds..."
-          timeout 5s ping -c 100 8.8.8.8 || true
-          echo "Traffic generation complete. Keeping pod alive for verification..."
-          sleep 3600
+          echo "Starting continuous traffic generation..."
+          while true; do ping -c 1 8.8.8.8 || true; sleep 1; done
       resources:
         requests:
           cpu: 50m

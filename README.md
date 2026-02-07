@@ -15,6 +15,14 @@ make test           # Deploy test pod, annotate, collect outputs
 make cleanup        # Teardown everything
 ```
 
+This branch captures on the host with `tcpdump host <PodIP>` and `hostNetwork: true`.
+
+Why this approach:
+- Keeps the controller small and easy to review for a screening task.
+- Avoids `/proc` scanning (brittle and runtime-specific).
+- Avoids CRI client coupling and extra failure modes.
+- Still satisfies the task requirement: capture starts/stops on annotation and produces pcap files.
+
 ## Deliverables
 
 | Deliverable | Location |

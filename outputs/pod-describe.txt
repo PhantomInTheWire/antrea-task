@@ -3,16 +3,16 @@ Namespace:        default
 Priority:         0
 Service Account:  default
 Node:             antrea-capture-worker/192.168.147.2
-Start Time:       Wed, 04 Feb 2026 20:05:55 +0530
+Start Time:       Sat, 07 Feb 2026 14:35:29 +0530
 Labels:           app=test-traffic
 Annotations:      tcpdump.antrea.io: 5
 Status:           Running
-IP:               172.31.130.3
+IP:               172.31.130.7
 IPs:
-  IP:  172.31.130.3
+  IP:  172.31.130.7
 Containers:
   traffic-generator:
-    Container ID:  containerd://271a9b3b93acb07bcc55ac13d38e43de51ca9b2461b83be38efc914222e62b0f
+    Container ID:  containerd://e03cc893aecc725f38828bb5a15ce4241a54c72678955efb1e30c7bf3ae92ac0
     Image:         busybox:latest
     Image ID:      docker.io/library/busybox@sha256:b3255e7dfbcd10cb367af0d409747d511aeb66dfac98cf30e97e87e4207dd76f
     Port:          <none>
@@ -20,13 +20,11 @@ Containers:
     Command:
       /bin/sh
       -c
-      echo "Starting traffic generation for 5 seconds..."
-      timeout 5s ping -c 100 8.8.8.8 || true
-      echo "Traffic generation complete. Keeping pod alive for verification..."
-      sleep 3600
+      echo "Starting continuous traffic generation..."
+      while true; do ping -c 1 8.8.8.8 || true; sleep 1; done
       
     State:          Running
-      Started:      Wed, 04 Feb 2026 20:06:06 +0530
+      Started:      Sat, 07 Feb 2026 14:35:34 +0530
     Ready:          True
     Restart Count:  0
     Limits:
@@ -37,7 +35,7 @@ Containers:
       memory:     64Mi
     Environment:  <none>
     Mounts:
-      /var/run/secrets/kubernetes.io/serviceaccount from kube-api-access-v2st8 (ro)
+      /var/run/secrets/kubernetes.io/serviceaccount from kube-api-access-r8fjr (ro)
 Conditions:
   Type                        Status
   PodReadyToStartContainers   True 
@@ -46,7 +44,7 @@ Conditions:
   ContainersReady             True 
   PodScheduled                True 
 Volumes:
-  kube-api-access-v2st8:
+  kube-api-access-r8fjr:
     Type:                    Projected (a volume that contains injected data from multiple sources)
     TokenExpirationSeconds:  3607
     ConfigMapName:           kube-root-ca.crt
@@ -59,8 +57,8 @@ Tolerations:                 node.kubernetes.io/not-ready:NoExecute op=Exists fo
 Events:
   Type    Reason     Age   From               Message
   ----    ------     ----  ----               -------
-  Normal  Scheduled  17s   default-scheduler  Successfully assigned default/test-traffic-pod to antrea-capture-worker
-  Normal  Pulling    17s   kubelet            spec.containers{traffic-generator}: Pulling image "busybox:latest"
-  Normal  Pulled     7s    kubelet            spec.containers{traffic-generator}: Successfully pulled image "busybox:latest" in 10.028s (10.028s including waiting). Image size: 1911467 bytes.
-  Normal  Created    7s    kubelet            spec.containers{traffic-generator}: Container created
-  Normal  Started    6s    kubelet            spec.containers{traffic-generator}: Container started
+  Normal  Scheduled  10s   default-scheduler  Successfully assigned default/test-traffic-pod to antrea-capture-worker
+  Normal  Pulling    9s    kubelet            spec.containers{traffic-generator}: Pulling image "busybox:latest"
+  Normal  Pulled     6s    kubelet            spec.containers{traffic-generator}: Successfully pulled image "busybox:latest" in 3.709s (3.709s including waiting). Image size: 1911467 bytes.
+  Normal  Created    6s    kubelet            spec.containers{traffic-generator}: Container created
+  Normal  Started    5s    kubelet            spec.containers{traffic-generator}: Container started

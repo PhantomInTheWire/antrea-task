@@ -23,7 +23,6 @@ import (
 
 const (
 	annotationKey = "tcpdump.antrea.io"
-	hostProcPath  = "/host/proc"
 )
 
 type captureProcess struct {
@@ -104,21 +103,20 @@ func (c *Controller) onPodDelete(o any) {
 }
 
 func (c *Controller) startCapture(podKey string, pod *corev1.Pod, maxFiles int) {
-	pid, err := findPodPid(pod)
-	if err != nil {
-		klog.Errorf("Failed to find PID for pod %s: %v", podKey, err)
+	podIP := pod.Status.PodIP
+	if podIP == "" {
+		klog.Errorf("Pod %s has no IP", podKey)
 		return
 	}
 	captureFile := fmt.Sprintf("/capture-%s.pcap", pod.Name)
-	cmd := exec.Command("nsenter", "-t", strconv.Itoa(pid), "-n", "--",
-		"tcpdump", "-i", "any", "-U", "-C", "1", "-W", strconv.Itoa(maxFiles), "-w", captureFile, "-Z", "root")
+	cmd := exec.Command("tcpdump", "-i", "any", "-U", "-C", "1", "-W", strconv.Itoa(maxFiles), "-w", captureFile, "-Z", "root", "host", podIP)
 	cmd.SysProcAttr = &syscall.SysProcAttr{Setpgid: true}
 	cmd.Stderr = os.Stderr
 	if err := cmd.Start(); err != nil {
 		klog.Errorf("Failed to start tcpdump for pod %s: %v", podKey, err)
 		return
 	}
-	klog.Infof("Started capture for pod %s (PID %d)", podKey, pid)
+	klog.Infof("Started capture for pod %s (IP %s)", podKey, podIP)
 	c.captures[podKey] = &captureProcess{cmd: cmd}
 	go func() {
 		_ = cmd.Wait()
@@ -159,43 +157,4 @@ func terminateProcessGroup(cmd *exec.Cmd) {
 		_ = syscall.Kill(-cmd.Process.Pid, syscall.SIGKILL)
 		<-done
 	}
-}
-
-func findPodPid(pod *corev1.Pod) (int, error) {
-	containerID, err := containerIDFromPod(pod)
-	if err != nil {
-		return 0, err
-	}
-	return pidForContainerID(containerID, pod.Namespace, pod.Name)
-}
-
-func containerIDFromPod(pod *corev1.Pod) (string, error) {
-	if len(pod.Status.ContainerStatuses) == 0 || pod.Status.ContainerStatuses[0].ContainerID == "" {
-		return "", fmt.Errorf("no container ID available for pod %s/%s", pod.Namespace, pod.Name)
-	}
-	parts := strings.Split(pod.Status.ContainerStatuses[0].ContainerID, "://")
-	if len(parts) < 2 {
-		return "", fmt.Errorf("invalid container ID format: %s", pod.Status.ContainerStatuses[0].ContainerID)
-	}
-	return parts[1], nil
-}
-
-func pidForContainerID(containerID string, namespace string, name string) (int, error) {
-	entries, err := os.ReadDir(hostProcPath)
-	if err != nil {
-		return 0, fmt.Errorf("failed to read /proc directory: %w", err)
-	}
-	for _, entry := range entries {
-		if pid, err := strconv.Atoi(entry.Name()); err == nil && pid != 0 {
-			cgroupPath := filepath.Join(hostProcPath, entry.Name(), "cgroup")
-			if content, err := os.ReadFile(cgroupPath); err == nil && strings.Contains(string(content), containerID) {
-				return pid, nil
-			}
-		}
-	}
-	shortID := containerID
-	if len(shortID) > 12 {
-		shortID = shortID[:12]
-	}
-	return 0, fmt.Errorf("could not find process ID for container %s in pod %s/%s", shortID, namespace, name)
 }

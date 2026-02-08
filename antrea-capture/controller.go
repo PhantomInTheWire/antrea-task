@@ -2,11 +2,13 @@ package main
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
 	"os"
 	"os/exec"
 	"path/filepath"
 	"strconv"
+	"strings"
 	"sync"
 	"syscall"
 	"time"
@@ -17,6 +19,7 @@ import (
 	"k8s.io/client-go/informers"
 	"k8s.io/client-go/kubernetes"
 	"k8s.io/client-go/tools/cache"
+	internalapi "k8s.io/cri-api/pkg/apis"
 	"k8s.io/klog/v2"
 )
 
@@ -34,12 +37,13 @@ type captureProcess struct {
 type Controller struct {
 	clientset kubernetes.Interface
 	nodeName  string
+	runtime   internalapi.RuntimeService
 	captures  map[string]*captureProcess
 	mu        sync.RWMutex
 }
 
-func NewController(cs kubernetes.Interface, node string) *Controller {
-	return &Controller{clientset: cs, nodeName: node, captures: make(map[string]*captureProcess)}
+func NewController(cs kubernetes.Interface, node string, runtime internalapi.RuntimeService) *Controller {
+	return &Controller{clientset: cs, nodeName: node, runtime: runtime, captures: make(map[string]*captureProcess)}
 }
 
 func (c *Controller) Run(ctx context.Context) error {
@@ -120,14 +124,20 @@ func (c *Controller) onPodDelete(o any) {
 }
 
 func (c *Controller) startCapture(podKey string, pod *corev1.Pod, maxFiles int) {
+	pid, err := c.getPodPID(context.Background(), pod)
+	if err != nil {
+		klog.Errorf("Failed to resolve PID for pod %s: %v", podKey, err)
+		return
+	}
 	captureFile := fmt.Sprintf("/capture-%s.pcap", pod.Name)
-	cmd := exec.Command("tcpdump", "-C", "1", "-W", strconv.Itoa(maxFiles), "-w", captureFile, "-Z", "root")
+	cmd := exec.Command("nsenter", "-t", strconv.Itoa(pid), "-n", "--", "tcpdump", "-i", "any", "-U", "-C", "1", "-W", strconv.Itoa(maxFiles), "-w", captureFile, "-Z", "root")
+	cmd.SysProcAttr = &syscall.SysProcAttr{Setpgid: true}
 	cmd.Stderr = os.Stderr
 	if err := cmd.Start(); err != nil {
 		klog.Errorf("Failed to start tcpdump for pod %s: %v", podKey, err)
 		return
 	}
-	klog.Infof("Started capture for pod %s", podKey)
+	klog.Infof("Started capture for pod %s (PID %d)", podKey, pid)
 	done := make(chan struct{})
 	c.mu.Lock()
 	c.captures[podKey] = &captureProcess{cmd: cmd, done: done, maxFiles: maxFiles, captureGlob: captureFile + "*"}
@@ -170,4 +180,29 @@ func (c *Controller) stopCaptureProcess(capture *captureProcess) {
 	for _, file := range matches {
 		_ = os.Remove(file)
 	}
+}
+
+func (c *Controller) getPodPID(ctx context.Context, pod *corev1.Pod) (int, error) {
+	var containerID string
+	for _, s := range pod.Status.ContainerStatuses {
+		if s.State.Running != nil && s.ContainerID != "" {
+			containerID = strings.TrimPrefix(s.ContainerID, "containerd://")
+			break
+		}
+	}
+	if containerID == "" {
+		return 0, fmt.Errorf("no running container")
+	}
+
+	resp, err := c.runtime.ContainerStatus(ctx, containerID, true)
+	if err != nil {
+		return 0, err
+	}
+	var info struct {
+		Pid int `json:"pid"`
+	}
+	if err := json.Unmarshal([]byte(resp.Info["info"]), &info); err != nil {
+		return 0, err
+	}
+	return info.Pid, nil
 }

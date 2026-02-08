@@ -13,8 +13,12 @@ spec:
         - /bin/sh
         - -c
         - |
-          echo "Starting continuous traffic generation..."
-          while true; do ping -c 1 8.8.8.8 || true; sleep 1; done
+          echo "Starting traffic generation..."
+          while true; do
+            ping -c 1 8.8.8.8 > /dev/null 2>&1
+            wget -q -O /dev/null https://kubernetes.default.svc.cluster.local 2>&1 || true
+            sleep 1
+          done
       resources:
         requests:
           cpu: 50m

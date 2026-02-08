@@ -17,19 +17,17 @@ make cleanup        # Teardown everything
 
 ## Architecture
 
-I went with `tcpdump host <PodIP>` running on the host via `hostNetwork: true`. No runtime dependencies, simple code, just works. It's not perfectly isolated but good enough for this task.
+I went with **CRI lookup + nsenter**: as in talk to the container runtime over the CRI socket, get the container's PID from the status, then `nsenter -n -t <pid>` to run tcpdump inside the pod's network namespace.
+
+This gives perfect isolation (capturing exactly what the pod sees) without the brittleness of scanning `/proc/*/cgroup` manually. The CRI client library handles the gRPC communication with containerd/cri-o, so it's both robust and runtime-agnostic.
 
 ## What I Considered
 
-Some other approaches I tried or thought about:
+**Before this**, I had a simpler version using `tcpdump host <PodIP>` running on the host via `hostNetwork: true`. No runtime dependencies, simple code, just works. But it's not perfectly isolated - you're still capturing from the host's perspective, and you miss pod-internal traffic.
 
-**Before this** (it's still in older commits on this repo) I was doing /proc scanning + nsenter (PID lookup by cgroup scan), basically just scan /proc/*/cgroup to find the container ID, get the PID, then nsenter -n and run tcpdump in the pod netns.
+I also had  **proc scanning** implemented at one point - basically scan `/proc/*/cgroup` to find the container ID, get the PID, then `nsenter -n`. It worked but felt very brittle.
 
-It was more accurate pod-specific capture but it felt very brittle by comparison to the above mentioned approach and seemed "overengineered".
-
-**CRI lookup + nsenter** was another option - talk to container runtime over CRI socket, get container status, extract PID, then nsenter -n. It was clean and felt like the "correct" way to do things but for a screening task this seemed even more "overengineered" than /proc scanning, added a lot more code and complexity.
-
-**Containerd API** to get PID, then nsenter - this would make the solution dependent on the containerd environment so I didn't pick it, but it would have been a correct and minimal solution.
+**Containerd API directly** was another option - bypass CRI and talk containerd gRPC directly. Would work but makes the solution containerd-specific.
 
 ## Deliverables
 

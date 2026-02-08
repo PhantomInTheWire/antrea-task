@@ -1,4 +1,4 @@
-ARG GO_VERSION=1.23
+ARG GO_VERSION=1.25
 
 FROM golang:${GO_VERSION} AS builder
 
@@ -18,7 +18,7 @@ RUN --mount=type=cache,target=/go/pkg/mod/ \
 FROM ubuntu:24.04
 
 LABEL maintainer="Karan Lokchandani"
-LABEL description="Antrea PacketCapture controller"
+LABEL description="Antrea PacketCapture controller Pretest"
 
 RUN apt-get update && \
     apt-get install -y --no-install-recommends \

@@ -13,7 +13,7 @@ help:
 
 build:
 	@mkdir -p $(BUILD_DIR)
-	@cd $(GO_DIR) && go mod tidy && go build -ldflags "$(LDFLAGS)" -o ../$(BUILD_DIR)/$(BINARY) .
+	@cd $(GO_DIR) && go build -ldflags "$(LDFLAGS)" -o ../$(BUILD_DIR)/$(BINARY) .
 	@echo "Built: $(BUILD_DIR)/$(BINARY)"
 
 docker-build:
@@ -38,9 +38,6 @@ test:
 	@echo "Starting capture..."
 	@kubectl annotate pod test-traffic-pod -n default tcpdump.antrea.io="5"
 	@sleep 5
-	@echo "Stopping capture..."
-	@kubectl annotate pod test-traffic-pod -n default tcpdump.antrea.io- 
-	@sleep 1
 	@mkdir -p outputs
 	@kubectl describe pod test-traffic-pod -n default > outputs/pod-describe.txt
 	@kubectl get pods -A > outputs/pods.txt
@@ -54,6 +51,9 @@ test:
 	else \
 		echo "No pcap files found" > outputs/capture-output.txt; \
 	fi
+	@echo "Stopping capture..."
+	@kubectl annotate pod test-traffic-pod -n default tcpdump.antrea.io- 
+	@sleep 2
 
 e2e: cluster-setup deploy test
 	@echo "E2E complete. Run 'make cleanup' to remove resources."

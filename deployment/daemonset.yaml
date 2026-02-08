@@ -21,8 +21,7 @@ spec:
         app: antrea-capture
     spec:
       serviceAccountName: antrea-capture
-      hostNetwork: true
-      dnsPolicy: ClusterFirstWithHostNet
+      hostPID: true
       containers:
         - name: antrea-capture
           image: antrea-capture:latest
@@ -34,5 +33,16 @@ spec:
               valueFrom:
                 fieldRef:
                   fieldPath: spec.nodeName
+            - name: CRI_SOCKET
+              value: unix:///run/containerd/containerd.sock
+          volumeMounts:
+            - name: containerd-socket
+              mountPath: /run/containerd/containerd.sock
+              readOnly: true
       tolerations:
         - operator: Exists
+      volumes:
+        - name: containerd-socket
+          hostPath:
+            path: /run/containerd/containerd.sock
+            type: Socket

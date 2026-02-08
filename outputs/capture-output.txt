@@ -1,46 +1,150 @@
-reading from file /capture-test-traffic-pod.pcap0, link-type EN10MB (Ethernet), snapshot length 262144
-13:44:20.289958 IP 192.168.147.2.10351 > 192.168.147.4.10351: UDP, length 107
-13:44:20.290117 IP 192.168.147.4.10351 > 192.168.147.2.10351: UDP, length 18
-13:44:20.530831 IP6 fe80::c893:c6ff:fe3f:efe2 > fe80::8046:8bff:fec9:56d1: ICMP6, neighbor solicitation, who has fe80::8046:8bff:fec9:56d1, length 32
-13:44:20.530921 IP6 fe80::8046:8bff:fec9:56d1 > fe80::c893:c6ff:fe3f:efe2: ICMP6, neighbor advertisement, tgt is fe80::8046:8bff:fec9:56d1, length 24
-13:44:20.900290 IP 192.168.147.4 > 8.8.8.8: ICMP echo request, id 13, seq 0, length 64
-13:44:20.919042 IP 8.8.8.8 > 192.168.147.4: ICMP echo reply, id 13, seq 0, length 64
-13:44:21.128785 IP 192.168.147.4.10351 > 192.168.147.2.10351: UDP, length 107
-13:44:21.133414 IP 192.168.147.2.10351 > 192.168.147.4.10351: UDP, length 18
-13:44:21.930651 IP 192.168.147.4 > 8.8.8.8: ICMP echo request, id 15, seq 0, length 64
-13:44:21.947681 IP 8.8.8.8 > 192.168.147.4: ICMP echo reply, id 15, seq 0, length 64
-13:44:22.077911 IP 192.168.147.3.10351 > 192.168.147.4.10351: UDP, length 100
-13:44:22.078844 IP 192.168.147.4.10351 > 192.168.147.3.10351: UDP, length 18
-13:44:22.128748 IP 192.168.147.4.10351 > 192.168.147.3.10351: UDP, length 100
-13:44:22.129163 IP 192.168.147.3.10351 > 192.168.147.4.10351: UDP, length 18
-13:44:22.289949 IP 192.168.147.2.10351 > 192.168.147.4.10351: UDP, length 107
-13:44:22.290361 IP 192.168.147.4.10351 > 192.168.147.2.10351: UDP, length 18
-13:44:22.951799 IP 192.168.147.4 > 8.8.8.8: ICMP echo request, id 17, seq 0, length 64
-13:44:22.969177 IP 8.8.8.8 > 192.168.147.4: ICMP echo reply, id 17, seq 0, length 64
-13:44:23.128695 IP 192.168.147.4.10351 > 192.168.147.2.10351: UDP, length 107
-13:44:23.129153 IP 192.168.147.2.10351 > 192.168.147.4.10351: UDP, length 18
-13:44:23.972911 IP 192.168.147.4 > 8.8.8.8: ICMP echo request, id 19, seq 0, length 64
-13:44:23.994375 IP 8.8.8.8 > 192.168.147.4: ICMP echo reply, id 19, seq 0, length 64
-13:44:24.070883 IP 192.168.147.4.36822 > 192.168.147.3.10351: Flags [S], seq 817735462, win 64240, options [mss 1460,sackOK,TS val 3411877954 ecr 0,nop,wscale 10], length 0
-13:44:24.071049 IP 192.168.147.3.10351 > 192.168.147.4.36822: Flags [S.], seq 1577177155, ack 817735463, win 65160, options [mss 1460,sackOK,TS val 214743683 ecr 3411877954,nop,wscale 10], length 0
-13:44:24.071096 IP 192.168.147.4.36822 > 192.168.147.3.10351: Flags [.], ack 1, win 63, options [nop,nop,TS val 3411877954 ecr 214743683], length 0
-13:44:24.072019 IP 192.168.147.4.36822 > 192.168.147.3.10351: Flags [P.], seq 1:238, ack 1, win 63, options [nop,nop,TS val 3411877955 ecr 214743683], length 237
-13:44:24.072047 IP 192.168.147.3.10351 > 192.168.147.4.36822: Flags [.], ack 238, win 64, options [nop,nop,TS val 214743684 ecr 3411877955], length 0
-13:44:24.072893 IP 192.168.147.3.10351 > 192.168.147.4.36822: Flags [P.], seq 1:238, ack 238, win 64, options [nop,nop,TS val 214743685 ecr 3411877955], length 237
-13:44:24.072917 IP 192.168.147.4.36822 > 192.168.147.3.10351: Flags [.], ack 238, win 63, options [nop,nop,TS val 3411877956 ecr 214743685], length 0
-13:44:24.073121 IP 192.168.147.4.36822 > 192.168.147.3.10351: Flags [F.], seq 238, ack 238, win 63, options [nop,nop,TS val 3411877956 ecr 214743685], length 0
-13:44:24.073292 IP 192.168.147.3.10351 > 192.168.147.4.36822: Flags [F.], seq 238, ack 239, win 64, options [nop,nop,TS val 214743685 ecr 3411877956], length 0
-13:44:24.073303 IP 192.168.147.4.36822 > 192.168.147.3.10351: Flags [.], ack 239, win 63, options [nop,nop,TS val 3411877956 ecr 214743685], length 0
-13:44:24.077106 IP 192.168.147.3.10351 > 192.168.147.4.10351: UDP, length 100
-13:44:24.077506 IP 192.168.147.4.10351 > 192.168.147.3.10351: UDP, length 18
-13:44:24.129277 IP 192.168.147.4.10351 > 192.168.147.2.10351: UDP, length 107
-13:44:24.129866 IP 192.168.147.2.10351 > 192.168.147.4.10351: UDP, length 18
-13:44:24.249720 IP 192.168.147.4.59756 > 192.168.147.3.10349: Flags [P.], seq 2593784649:2593784688, ack 707812229, win 73, options [nop,nop,TS val 3411878133 ecr 214713860], length 39
-13:44:24.250444 IP 192.168.147.3.10349 > 192.168.147.4.59756: Flags [P.], seq 1:40, ack 39, win 70, options [nop,nop,TS val 214743862 ecr 3411878133], length 39
-13:44:24.289884 IP 192.168.147.2.10351 > 192.168.147.4.10351: UDP, length 107
-13:44:24.290687 IP 192.168.147.4.59756 > 192.168.147.3.10349: Flags [.], ack 40, win 73, options [nop,nop,TS val 3411878174 ecr 214743862], length 0
-13:44:24.290687 IP 192.168.147.4.10351 > 192.168.147.2.10351: UDP, length 18
-13:44:25.002932 IP 192.168.147.4 > 8.8.8.8: ICMP echo request, id 21, seq 0, length 64
-13:44:25.021942 IP 8.8.8.8 > 192.168.147.4: ICMP echo reply, id 21, seq 0, length 64
-13:44:25.128455 IP 192.168.147.4.10351 > 192.168.147.3.10351: UDP, length 100
-13:44:25.129286 IP 192.168.147.3.10351 > 192.168.147.4.10351: UDP, length 18
+reading from file /capture-test-traffic-pod.pcap0, link-type LINUX_SLL2 (Linux cooked v2), snapshot length 262144
+Warning: interface names might be incorrect
+00:43:33.782634 eth0  Out IP 172.31.131.3 > 8.8.8.8: ICMP echo request, id 16, seq 0, length 64
+00:43:33.904038 eth0  In  IP 8.8.8.8 > 172.31.131.3: ICMP echo reply, id 16, seq 0, length 64
+00:43:33.906342 eth0  Out IP 172.31.131.3.45370 > 172.30.0.10.53: 14808+ A? kubernetes.default.svc.cluster.local.default.svc.cluster.local. (80)
+00:43:33.906422 eth0  Out IP 172.31.131.3.45370 > 172.30.0.10.53: 11228+ AAAA? kubernetes.default.svc.cluster.local.default.svc.cluster.local. (80)
+00:43:33.907810 eth0  In  IP 172.30.0.10.53 > 172.31.131.3.45370: 14808 NXDomain*- 0/1/0 (173)
+00:43:33.907973 eth0  In  IP 172.30.0.10.53 > 172.31.131.3.45370: 11228 NXDomain*- 0/1/0 (173)
+00:43:33.908104 eth0  Out IP 172.31.131.3.47517 > 172.30.0.10.53: 64480+ A? kubernetes.default.svc.cluster.local.svc.cluster.local. (72)
+00:43:33.908206 eth0  Out IP 172.31.131.3.47517 > 172.30.0.10.53: 30697+ AAAA? kubernetes.default.svc.cluster.local.svc.cluster.local. (72)
+00:43:33.909956 eth0  In  IP 172.30.0.10.53 > 172.31.131.3.47517: 30697 NXDomain*- 0/1/0 (165)
+00:43:33.910240 eth0  In  IP 172.30.0.10.53 > 172.31.131.3.47517: 64480 NXDomain*- 0/1/0 (165)
+00:43:33.910484 eth0  Out IP 172.31.131.3.37988 > 172.30.0.10.53: 63224+ A? kubernetes.default.svc.cluster.local.cluster.local. (68)
+00:43:33.910585 eth0  Out IP 172.31.131.3.37988 > 172.30.0.10.53: 34557+ AAAA? kubernetes.default.svc.cluster.local.cluster.local. (68)
+00:43:33.910793 eth0  In  IP 172.30.0.10.53 > 172.31.131.3.37988: 63224 NXDomain*- 0/1/0 (161)
+00:43:33.911800 eth0  In  IP 172.30.0.10.53 > 172.31.131.3.37988: 34557 NXDomain*- 0/1/0 (161)
+00:43:33.911934 eth0  Out IP 172.31.131.3.47699 > 172.30.0.10.53: 57531+ A? kubernetes.default.svc.cluster.local. (54)
+00:43:33.911964 eth0  Out IP 172.31.131.3.47699 > 172.30.0.10.53: 48063+ AAAA? kubernetes.default.svc.cluster.local. (54)
+00:43:33.912612 eth0  In  IP 172.30.0.10.53 > 172.31.131.3.47699: 57531*- 1/0/0 A 172.30.0.1 (106)
+00:43:33.912704 eth0  In  IP 172.30.0.10.53 > 172.31.131.3.47699: 48063*- 0/1/0 (147)
+00:43:33.913115 eth0  Out IP 172.31.131.3.58420 > 172.30.0.1.443: Flags [S], seq 2481080878, win 64860, options [mss 1410,sackOK,TS val 1518418499 ecr 0,nop,wscale 10], length 0
+00:43:33.913387 eth0  In  IP 172.30.0.1.443 > 172.31.131.3.58420: Flags [S.], seq 3773963013, ack 2481080879, win 65160, options [mss 1460,sackOK,TS val 1877894069 ecr 1518418499,nop,wscale 10], length 0
+00:43:33.913408 eth0  Out IP 172.31.131.3.58420 > 172.30.0.1.443: Flags [.], ack 1, win 64, options [nop,nop,TS val 1518418500 ecr 1877894069], length 0
+00:43:33.914393 eth0  Out IP 172.31.131.3.58420 > 172.30.0.1.443: Flags [P.], seq 1:134, ack 1, win 64, options [nop,nop,TS val 1518418501 ecr 1877894069], length 133
+00:43:33.914466 eth0  In  IP 172.30.0.1.443 > 172.31.131.3.58420: Flags [.], ack 134, win 64, options [nop,nop,TS val 1877894070 ecr 1518418501], length 0
+00:43:33.917190 eth0  In  IP 172.30.0.1.443 > 172.31.131.3.58420: Flags [P.], seq 1:1458, ack 134, win 64, options [nop,nop,TS val 1877894072 ecr 1518418501], length 1457
+00:43:33.917209 eth0  Out IP 172.31.131.3.58420 > 172.30.0.1.443: Flags [.], ack 1458, win 67, options [nop,nop,TS val 1518418504 ecr 1877894072], length 0
+00:43:33.917325 eth0  Out IP 172.31.131.3.58420 > 172.30.0.1.443: Flags [P.], seq 134:146, ack 1458, win 67, options [nop,nop,TS val 1518418504 ecr 1877894072], length 12
+00:43:33.958816 eth0  In  IP 172.30.0.1.443 > 172.31.131.3.58420: Flags [.], ack 146, win 64, options [nop,nop,TS val 1877894114 ecr 1518418504], length 0
+00:43:33.958839 eth0  Out IP 172.31.131.3.58420 > 172.30.0.1.443: Flags [P.], seq 146:272, ack 1458, win 67, options [nop,nop,TS val 1518418545 ecr 1877894114], length 126
+00:43:33.958906 eth0  In  IP 172.30.0.1.443 > 172.31.131.3.58420: Flags [.], ack 272, win 64, options [nop,nop,TS val 1877894114 ecr 1518418545], length 0
+00:43:33.959315 eth0  In  IP 172.30.0.1.443 > 172.31.131.3.58420: Flags [P.], seq 1458:1509, ack 272, win 64, options [nop,nop,TS val 1877894115 ecr 1518418545], length 51
+00:43:33.959554 eth0  Out IP 172.31.131.3.58420 > 172.30.0.1.443: Flags [P.], seq 272:400, ack 1509, win 67, options [nop,nop,TS val 1518418546 ecr 1877894115], length 128
+00:43:33.960621 eth0  In  IP 172.30.0.1.443 > 172.31.131.3.58420: Flags [P.], seq 1509:2148, ack 400, win 64, options [nop,nop,TS val 1877894116 ecr 1518418546], length 639
+00:43:33.960689 eth0  In  IP 172.30.0.1.443 > 172.31.131.3.58420: Flags [P.], seq 2148:2179, ack 400, win 64, options [nop,nop,TS val 1877894116 ecr 1518418546], length 31
+00:43:33.960715 eth0  Out IP 172.31.131.3.58420 > 172.30.0.1.443: Flags [.], ack 2179, win 70, options [nop,nop,TS val 1518418547 ecr 1877894116], length 0
+00:43:33.960732 eth0  In  IP 172.30.0.1.443 > 172.31.131.3.58420: Flags [F.], seq 2179, ack 400, win 64, options [nop,nop,TS val 1877894116 ecr 1518418546], length 0
+00:43:33.961121 eth0  Out IP 172.31.131.3.58420 > 172.30.0.1.443: Flags [F.], seq 400, ack 2180, win 70, options [nop,nop,TS val 1518418547 ecr 1877894116], length 0
+00:43:33.961191 eth0  In  IP 172.30.0.1.443 > 172.31.131.3.58420: Flags [.], ack 401, win 64, options [nop,nop,TS val 1877894116 ecr 1518418547], length 0
+00:43:34.964614 eth0  Out IP 172.31.131.3 > 8.8.8.8: ICMP echo request, id 21, seq 0, length 64
+00:43:35.056291 eth0  In  IP 8.8.8.8 > 172.31.131.3: ICMP echo reply, id 21, seq 0, length 64
+00:43:35.058867 eth0  Out IP 172.31.131.3.58882 > 172.30.0.10.53: 61624+ A? kubernetes.default.svc.cluster.local.default.svc.cluster.local. (80)
+00:43:35.058963 eth0  Out IP 172.31.131.3.58882 > 172.30.0.10.53: 28036+ AAAA? kubernetes.default.svc.cluster.local.default.svc.cluster.local. (80)
+00:43:35.060862 eth0  In  IP 172.30.0.10.53 > 172.31.131.3.58882: 28036 NXDomain*- 0/1/0 (173)
+00:43:35.061044 eth0  In  IP 172.30.0.10.53 > 172.31.131.3.58882: 61624 NXDomain*- 0/1/0 (173)
+00:43:35.061319 eth0  Out IP 172.31.131.3.43726 > 172.30.0.10.53: 4648+ A? kubernetes.default.svc.cluster.local.svc.cluster.local. (72)
+00:43:35.061378 eth0  Out IP 172.31.131.3.43726 > 172.30.0.10.53: 24115+ AAAA? kubernetes.default.svc.cluster.local.svc.cluster.local. (72)
+00:43:35.062386 eth0  In  IP 172.30.0.10.53 > 172.31.131.3.43726: 24115 NXDomain*- 0/1/0 (165)
+00:43:35.062558 eth0  In  IP 172.30.0.10.53 > 172.31.131.3.43726: 4648 NXDomain*- 0/1/0 (165)
+00:43:35.062705 eth0  Out IP 172.31.131.3.44690 > 172.30.0.10.53: 65245+ A? kubernetes.default.svc.cluster.local.cluster.local. (68)
+00:43:35.062896 eth0  Out IP 172.31.131.3.44690 > 172.30.0.10.53: 19417+ AAAA? kubernetes.default.svc.cluster.local.cluster.local. (68)
+00:43:35.063438 eth0  In  IP 172.30.0.10.53 > 172.31.131.3.44690: 19417 NXDomain*- 0/1/0 (161)
+00:43:35.063953 eth0  In  IP 172.30.0.10.53 > 172.31.131.3.44690: 65245 NXDomain*- 0/1/0 (161)
+00:43:35.064084 eth0  Out IP 172.31.131.3.47604 > 172.30.0.10.53: 14761+ A? kubernetes.default.svc.cluster.local. (54)
+00:43:35.064691 eth0  Out IP 172.31.131.3.47604 > 172.30.0.10.53: 31662+ AAAA? kubernetes.default.svc.cluster.local. (54)
+00:43:35.065034 eth0  In  IP 172.30.0.10.53 > 172.31.131.3.47604: 14761*- 1/0/0 A 172.30.0.1 (106)
+00:43:35.065380 eth0  In  IP 172.30.0.10.53 > 172.31.131.3.47604: 31662*- 0/1/0 (147)
+00:43:35.066004 eth0  Out IP 172.31.131.3.58436 > 172.30.0.1.443: Flags [S], seq 4019085495, win 64860, options [mss 1410,sackOK,TS val 1518419652 ecr 0,nop,wscale 10], length 0
+00:43:35.066322 eth0  In  IP 172.30.0.1.443 > 172.31.131.3.58436: Flags [S.], seq 417590490, ack 4019085496, win 65160, options [mss 1460,sackOK,TS val 1877895222 ecr 1518419652,nop,wscale 10], length 0
+00:43:35.066372 eth0  Out IP 172.31.131.3.58436 > 172.30.0.1.443: Flags [.], ack 1, win 64, options [nop,nop,TS val 1518419653 ecr 1877895222], length 0
+00:43:35.067002 eth0  Out IP 172.31.131.3.58436 > 172.30.0.1.443: Flags [P.], seq 1:134, ack 1, win 64, options [nop,nop,TS val 1518419653 ecr 1877895222], length 133
+00:43:35.067081 eth0  In  IP 172.30.0.1.443 > 172.31.131.3.58436: Flags [.], ack 134, win 64, options [nop,nop,TS val 1877895222 ecr 1518419653], length 0
+00:43:35.070727 eth0  In  IP 172.30.0.1.443 > 172.31.131.3.58436: Flags [P.], seq 1:1458, ack 134, win 64, options [nop,nop,TS val 1877895226 ecr 1518419653], length 1457
+00:43:35.070752 eth0  Out IP 172.31.131.3.58436 > 172.30.0.1.443: Flags [.], ack 1458, win 67, options [nop,nop,TS val 1518419657 ecr 1877895226], length 0
+00:43:35.070834 eth0  Out IP 172.31.131.3.58436 > 172.30.0.1.443: Flags [P.], seq 134:146, ack 1458, win 67, options [nop,nop,TS val 1518419657 ecr 1877895226], length 12
+00:43:35.111520 eth0  In  IP 172.30.0.1.443 > 172.31.131.3.58436: Flags [.], ack 146, win 64, options [nop,nop,TS val 1877895267 ecr 1518419657], length 0
+00:43:35.111540 eth0  Out IP 172.31.131.3.58436 > 172.30.0.1.443: Flags [P.], seq 146:272, ack 1458, win 67, options [nop,nop,TS val 1518419698 ecr 1877895267], length 126
+00:43:35.111600 eth0  In  IP 172.30.0.1.443 > 172.31.131.3.58436: Flags [.], ack 272, win 64, options [nop,nop,TS val 1877895267 ecr 1518419698], length 0
+00:43:35.111846 eth0  In  IP 172.30.0.1.443 > 172.31.131.3.58436: Flags [P.], seq 1458:1509, ack 272, win 64, options [nop,nop,TS val 1877895267 ecr 1518419698], length 51
+00:43:35.111932 eth0  Out IP 172.31.131.3.58436 > 172.30.0.1.443: Flags [P.], seq 272:400, ack 1509, win 67, options [nop,nop,TS val 1518419698 ecr 1877895267], length 128
+00:43:35.112994 eth0  In  IP 172.30.0.1.443 > 172.31.131.3.58436: Flags [P.], seq 1509:2148, ack 400, win 64, options [nop,nop,TS val 1877895268 ecr 1518419698], length 639
+00:43:35.113109 eth0  In  IP 172.30.0.1.443 > 172.31.131.3.58436: Flags [P.], seq 2148:2179, ack 400, win 64, options [nop,nop,TS val 1877895268 ecr 1518419698], length 31
+00:43:35.113121 eth0  Out IP 172.31.131.3.58436 > 172.30.0.1.443: Flags [.], ack 2179, win 70, options [nop,nop,TS val 1518419699 ecr 1877895268], length 0
+00:43:35.113299 eth0  Out IP 172.31.131.3.58436 > 172.30.0.1.443: Flags [F.], seq 400, ack 2179, win 70, options [nop,nop,TS val 1518419700 ecr 1877895268], length 0
+00:43:35.113391 eth0  In  IP 172.30.0.1.443 > 172.31.131.3.58436: Flags [F.], seq 2179, ack 401, win 64, options [nop,nop,TS val 1877895269 ecr 1518419700], length 0
+00:43:35.113395 eth0  Out IP 172.31.131.3.58436 > 172.30.0.1.443: Flags [.], ack 2180, win 70, options [nop,nop,TS val 1518419700 ecr 1877895269], length 0
+00:43:36.124681 eth0  Out IP 172.31.131.3 > 8.8.8.8: ICMP echo request, id 26, seq 0, length 64
+00:43:36.200592 eth0  In  IP 8.8.8.8 > 172.31.131.3: ICMP echo reply, id 26, seq 0, length 64
+00:43:36.202542 eth0  Out IP 172.31.131.3.54968 > 172.30.0.10.53: 40875+ A? kubernetes.default.svc.cluster.local.default.svc.cluster.local. (80)
+00:43:36.202777 eth0  Out IP 172.31.131.3.54968 > 172.30.0.10.53: 62888+ AAAA? kubernetes.default.svc.cluster.local.default.svc.cluster.local. (80)
+00:43:36.203439 eth0  In  IP 172.30.0.10.53 > 172.31.131.3.54968: 40875 NXDomain*- 0/1/0 (173)
+00:43:36.203602 eth0  In  IP 172.30.0.10.53 > 172.31.131.3.54968: 62888 NXDomain*- 0/1/0 (173)
+00:43:36.203683 eth0  Out IP 172.31.131.3.37662 > 172.30.0.10.53: 24869+ A? kubernetes.default.svc.cluster.local.svc.cluster.local. (72)
+00:43:36.203745 eth0  Out IP 172.31.131.3.37662 > 172.30.0.10.53: 7457+ AAAA? kubernetes.default.svc.cluster.local.svc.cluster.local. (72)
+00:43:36.204939 eth0  In  IP 172.30.0.10.53 > 172.31.131.3.37662: 24869 NXDomain*- 0/1/0 (165)
+00:43:36.205263 eth0  In  IP 172.30.0.10.53 > 172.31.131.3.37662: 7457 NXDomain*- 0/1/0 (165)
+00:43:36.205308 eth0  Out IP 172.31.131.3.60956 > 172.30.0.10.53: 24841+ A? kubernetes.default.svc.cluster.local.cluster.local. (68)
+00:43:36.205372 eth0  Out IP 172.31.131.3.60956 > 172.30.0.10.53: 32260+ AAAA? kubernetes.default.svc.cluster.local.cluster.local. (68)
+00:43:36.205551 eth0  In  IP 172.30.0.10.53 > 172.31.131.3.60956: 32260 NXDomain*- 0/1/0 (161)
+00:43:36.205591 eth0  In  IP 172.30.0.10.53 > 172.31.131.3.60956: 24841 NXDomain*- 0/1/0 (161)
+00:43:36.205624 eth0  Out IP 172.31.131.3.42639 > 172.30.0.10.53: 38670+ A? kubernetes.default.svc.cluster.local. (54)
+00:43:36.205680 eth0  Out IP 172.31.131.3.42639 > 172.30.0.10.53: 57100+ AAAA? kubernetes.default.svc.cluster.local. (54)
+00:43:36.205895 eth0  In  IP 172.30.0.10.53 > 172.31.131.3.42639: 38670*- 1/0/0 A 172.30.0.1 (106)
+00:43:36.205971 eth0  In  IP 172.30.0.10.53 > 172.31.131.3.42639: 57100*- 0/1/0 (147)
+00:43:36.206397 eth0  Out IP 172.31.131.3.58444 > 172.30.0.1.443: Flags [S], seq 1369004454, win 64860, options [mss 1410,sackOK,TS val 1518420793 ecr 0,nop,wscale 10], length 0
+00:43:36.206760 eth0  In  IP 172.30.0.1.443 > 172.31.131.3.58444: Flags [S.], seq 3771127605, ack 1369004455, win 65160, options [mss 1460,sackOK,TS val 1877896362 ecr 1518420793,nop,wscale 10], length 0
+00:43:36.206784 eth0  Out IP 172.31.131.3.58444 > 172.30.0.1.443: Flags [.], ack 1, win 64, options [nop,nop,TS val 1518420793 ecr 1877896362], length 0
+00:43:36.207456 eth0  Out IP 172.31.131.3.58444 > 172.30.0.1.443: Flags [P.], seq 1:134, ack 1, win 64, options [nop,nop,TS val 1518420794 ecr 1877896362], length 133
+00:43:36.207553 eth0  In  IP 172.30.0.1.443 > 172.31.131.3.58444: Flags [.], ack 134, win 64, options [nop,nop,TS val 1877896363 ecr 1518420794], length 0
+00:43:36.211599 eth0  In  IP 172.30.0.1.443 > 172.31.131.3.58444: Flags [P.], seq 1:1458, ack 134, win 64, options [nop,nop,TS val 1877896367 ecr 1518420794], length 1457
+00:43:36.211628 eth0  Out IP 172.31.131.3.58444 > 172.30.0.1.443: Flags [.], ack 1458, win 67, options [nop,nop,TS val 1518420798 ecr 1877896367], length 0
+00:43:36.211777 eth0  Out IP 172.31.131.3.58444 > 172.30.0.1.443: Flags [P.], seq 134:146, ack 1458, win 67, options [nop,nop,TS val 1518420798 ecr 1877896367], length 12
+00:43:36.252439 eth0  In  IP 172.30.0.1.443 > 172.31.131.3.58444: Flags [.], ack 146, win 64, options [nop,nop,TS val 1877896408 ecr 1518420798], length 0
+00:43:36.252470 eth0  Out IP 172.31.131.3.58444 > 172.30.0.1.443: Flags [P.], seq 146:272, ack 1458, win 67, options [nop,nop,TS val 1518420839 ecr 1877896408], length 126
+00:43:36.252537 eth0  In  IP 172.30.0.1.443 > 172.31.131.3.58444: Flags [.], ack 272, win 64, options [nop,nop,TS val 1877896408 ecr 1518420839], length 0
+00:43:36.252891 eth0  In  IP 172.30.0.1.443 > 172.31.131.3.58444: Flags [P.], seq 1458:1509, ack 272, win 64, options [nop,nop,TS val 1877896408 ecr 1518420839], length 51
+00:43:36.253046 eth0  Out IP 172.31.131.3.58444 > 172.30.0.1.443: Flags [P.], seq 272:400, ack 1509, win 67, options [nop,nop,TS val 1518420839 ecr 1877896408], length 128
+00:43:36.254230 eth0  In  IP 172.30.0.1.443 > 172.31.131.3.58444: Flags [P.], seq 1509:2148, ack 400, win 64, options [nop,nop,TS val 1877896410 ecr 1518420839], length 639
+00:43:36.254322 eth0  In  IP 172.30.0.1.443 > 172.31.131.3.58444: Flags [P.], seq 2148:2179, ack 400, win 64, options [nop,nop,TS val 1877896410 ecr 1518420839], length 31
+00:43:36.254332 eth0  Out IP 172.31.131.3.58444 > 172.30.0.1.443: Flags [.], ack 2179, win 70, options [nop,nop,TS val 1518420841 ecr 1877896410], length 0
+00:43:36.254574 eth0  Out IP 172.31.131.3.58444 > 172.30.0.1.443: Flags [F.], seq 400, ack 2179, win 70, options [nop,nop,TS val 1518420841 ecr 1877896410], length 0
+00:43:36.254779 eth0  In  IP 172.30.0.1.443 > 172.31.131.3.58444: Flags [F.], seq 2179, ack 401, win 64, options [nop,nop,TS val 1877896410 ecr 1518420841], length 0
+00:43:36.254787 eth0  Out IP 172.31.131.3.58444 > 172.30.0.1.443: Flags [.], ack 2180, win 70, options [nop,nop,TS val 1518420841 ecr 1877896410], length 0
+00:43:37.259063 eth0  Out IP 172.31.131.3 > 8.8.8.8: ICMP echo request, id 31, seq 0, length 64
+00:43:37.297955 eth0  In  IP 8.8.8.8 > 172.31.131.3: ICMP echo reply, id 31, seq 0, length 64
+00:43:37.300417 eth0  Out IP 172.31.131.3.36090 > 172.30.0.10.53: 29271+ A? kubernetes.default.svc.cluster.local.default.svc.cluster.local. (80)
+00:43:37.300680 eth0  Out IP 172.31.131.3.36090 > 172.30.0.10.53: 47469+ AAAA? kubernetes.default.svc.cluster.local.default.svc.cluster.local. (80)
+00:43:37.301315 eth0  In  IP 172.30.0.10.53 > 172.31.131.3.36090: 47469 NXDomain*- 0/1/0 (173)
+00:43:37.301638 eth0  In  IP 172.30.0.10.53 > 172.31.131.3.36090: 29271 NXDomain*- 0/1/0 (173)
+00:43:37.301807 eth0  Out IP 172.31.131.3.60960 > 172.30.0.10.53: 36134+ A? kubernetes.default.svc.cluster.local.svc.cluster.local. (72)
+00:43:37.301868 eth0  Out IP 172.31.131.3.60960 > 172.30.0.10.53: 56860+ AAAA? kubernetes.default.svc.cluster.local.svc.cluster.local. (72)
+00:43:37.302730 eth0  In  IP 172.30.0.10.53 > 172.31.131.3.60960: 56860 NXDomain*- 0/1/0 (165)
+00:43:37.302863 eth0  In  IP 172.30.0.10.53 > 172.31.131.3.60960: 36134 NXDomain*- 0/1/0 (165)
+00:43:37.303039 eth0  Out IP 172.31.131.3.53256 > 172.30.0.10.53: 29246+ A? kubernetes.default.svc.cluster.local.cluster.local. (68)
+00:43:37.303250 eth0  Out IP 172.31.131.3.53256 > 172.30.0.10.53: 822+ AAAA? kubernetes.default.svc.cluster.local.cluster.local. (68)
+00:43:37.303550 eth0  In  IP 172.30.0.10.53 > 172.31.131.3.53256: 29246 NXDomain*- 0/1/0 (161)
+00:43:37.303673 eth0  In  IP 172.30.0.10.53 > 172.31.131.3.53256: 822 NXDomain*- 0/1/0 (161)
+00:43:37.303746 eth0  Out IP 172.31.131.3.51314 > 172.30.0.10.53: 27758+ A? kubernetes.default.svc.cluster.local. (54)
+00:43:37.303800 eth0  Out IP 172.31.131.3.51314 > 172.30.0.10.53: 55139+ AAAA? kubernetes.default.svc.cluster.local. (54)
+00:43:37.303972 eth0  In  IP 172.30.0.10.53 > 172.31.131.3.51314: 55139*- 0/1/0 (147)
+00:43:37.304094 eth0  In  IP 172.30.0.10.53 > 172.31.131.3.51314: 27758*- 1/0/0 A 172.30.0.1 (106)
+00:43:37.304339 eth0  Out IP 172.31.131.3.58458 > 172.30.0.1.443: Flags [S], seq 48116217, win 64860, options [mss 1410,sackOK,TS val 1518421891 ecr 0,nop,wscale 10], length 0
+00:43:37.304635 eth0  In  IP 172.30.0.1.443 > 172.31.131.3.58458: Flags [S.], seq 71425905, ack 48116218, win 65160, options [mss 1460,sackOK,TS val 1877897460 ecr 1518421891,nop,wscale 10], length 0
+00:43:37.304648 eth0  Out IP 172.31.131.3.58458 > 172.30.0.1.443: Flags [.], ack 1, win 64, options [nop,nop,TS val 1518421891 ecr 1877897460], length 0
+00:43:37.305126 eth0  Out IP 172.31.131.3.58458 > 172.30.0.1.443: Flags [P.], seq 1:134, ack 1, win 64, options [nop,nop,TS val 1518421891 ecr 1877897460], length 133
+00:43:37.305241 eth0  In  IP 172.30.0.1.443 > 172.31.131.3.58458: Flags [.], ack 134, win 64, options [nop,nop,TS val 1877897461 ecr 1518421891], length 0
+00:43:37.308359 eth0  In  IP 172.30.0.1.443 > 172.31.131.3.58458: Flags [P.], seq 1:1458, ack 134, win 64, options [nop,nop,TS val 1877897464 ecr 1518421891], length 1457
+00:43:37.308384 eth0  Out IP 172.31.131.3.58458 > 172.30.0.1.443: Flags [.], ack 1458, win 67, options [nop,nop,TS val 1518421895 ecr 1877897464], length 0
+00:43:37.308506 eth0  Out IP 172.31.131.3.58458 > 172.30.0.1.443: Flags [P.], seq 134:146, ack 1458, win 67, options [nop,nop,TS val 1518421895 ecr 1877897464], length 12
+00:43:37.349423 eth0  In  IP 172.30.0.1.443 > 172.31.131.3.58458: Flags [.], ack 146, win 64, options [nop,nop,TS val 1877897505 ecr 1518421895], length 0
+00:43:37.349454 eth0  Out IP 172.31.131.3.58458 > 172.30.0.1.443: Flags [P.], seq 146:272, ack 1458, win 67, options [nop,nop,TS val 1518421936 ecr 1877897505], length 126
+00:43:37.349536 eth0  In  IP 172.30.0.1.443 > 172.31.131.3.58458: Flags [.], ack 272, win 64, options [nop,nop,TS val 1877897505 ecr 1518421936], length 0
+00:43:37.350147 eth0  In  IP 172.30.0.1.443 > 172.31.131.3.58458: Flags [P.], seq 1458:1509, ack 272, win 64, options [nop,nop,TS val 1877897505 ecr 1518421936], length 51
+00:43:37.350482 eth0  Out IP 172.31.131.3.58458 > 172.30.0.1.443: Flags [P.], seq 272:400, ack 1509, win 67, options [nop,nop,TS val 1518421937 ecr 1877897505], length 128
+00:43:37.352359 eth0  In  IP 172.30.0.1.443 > 172.31.131.3.58458: Flags [P.], seq 1509:2148, ack 400, win 64, options [nop,nop,TS val 1877897508 ecr 1518421937], length 639
+00:43:37.352736 eth0  In  IP 172.30.0.1.443 > 172.31.131.3.58458: Flags [P.], seq 2148:2179, ack 400, win 64, options [nop,nop,TS val 1877897508 ecr 1518421937], length 31
+00:43:37.352782 eth0  In  IP 172.30.0.1.443 > 172.31.131.3.58458: Flags [F.], seq 2179, ack 400, win 64, options [nop,nop,TS val 1877897508 ecr 1518421937], length 0
+00:43:37.352813 eth0  Out IP 172.31.131.3.58458 > 172.30.0.1.443: Flags [.], ack 2180, win 70, options [nop,nop,TS val 1518421939 ecr 1877897508], length 0
+00:43:37.352983 eth0  Out IP 172.31.131.3.58458 > 172.30.0.1.443: Flags [F.], seq 400, ack 2180, win 70, options [nop,nop,TS val 1518421939 ecr 1877897508], length 0
+00:43:37.353018 eth0  In  IP 172.30.0.1.443 > 172.31.131.3.58458: Flags [.], ack 401, win 64, options [nop,nop,TS val 1877897508 ecr 1518421939], length 0
